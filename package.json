@@ -6,9 +6,9 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm --prefix apps/registry-web run dev",
-    "build": "npm --prefix apps/registry-web run build",
-    "preview": "npm --prefix apps/registry-web run preview",
-    "typecheck": "npm --prefix apps/registry-web run typecheck"
+    "dev": "bun --cwd apps/registry-web dev",
+    "build": "bun --cwd apps/registry-web build",
+    "preview": "bun --cwd apps/registry-web preview",
+    "typecheck": "bun --cwd apps/registry-web typecheck"
   }
 }

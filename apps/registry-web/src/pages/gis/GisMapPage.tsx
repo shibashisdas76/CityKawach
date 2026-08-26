@@ -11,7 +11,7 @@ const customMarker = (status: string) => {
   const color = status === 'ONLINE' ? '#10B981' : status === 'OFFLINE' ? '#EF4444' : '#F59E0B';
   return L.divIcon({
     className: 'custom-div-icon',
-    html: `<div style="background-color:${color};width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 0 6px rgba(0,0,0,0.4);"></div>`,
+    html: `<div style="background-color:${color};width:16px;height:16px;border-radius:50%;border:2.5px solid white;box-shadow:0 0 8px rgba(0,0,0,0.35);"></div>`,
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   });
@@ -71,18 +71,20 @@ export const GisMapPage: React.FC = () => {
   });
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col space-y-4">
+    <div className="h-[calc(100vh-8.5rem)] flex flex-col space-y-4">
       {/* Map Header Controls */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap justify-between items-center gap-3">
+      <div className="bg-white p-4.5 rounded-2xl border border-slate-200/80 shadow-saasable flex flex-wrap justify-between items-center gap-3">
         <div>
-          <h2 className="text-sm font-bold text-slate-900">Geospatial CCTV Infrastructure Map</h2>
-          <p className="text-xs text-slate-500">PostGIS Coordinates & Urban Coverage Analysis ({filteredCameras.length} Assets)</p>
+          <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">Geospatial CCTV Infrastructure Map</h2>
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">
+            PostGIS Coordinates & Urban Coverage Analysis (<span className="font-bold text-slate-700">{filteredCameras.length}</span> Assets)
+          </p>
         </div>
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
-            <label className="text-xs font-semibold text-slate-600">Dept Layer:</label>
+            <label className="text-xs font-bold text-slate-600 uppercase text-[10px] tracking-wider">Dept Layer:</label>
             <select
-              className="text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-slate-50 font-medium"
+              className="text-xs border border-slate-200 rounded-xl px-3 py-2 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-indigo-500 outline-none transition"
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
             >
@@ -96,9 +98,9 @@ export const GisMapPage: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-2">
-            <label className="text-xs font-semibold text-slate-600">Status:</label>
+            <label className="text-xs font-bold text-slate-600 uppercase text-[10px] tracking-wider">Status:</label>
             <select
-              className="text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-slate-50 font-medium"
+              className="text-xs border border-slate-200 rounded-xl px-3 py-2 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-indigo-500 outline-none transition"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
@@ -112,7 +114,7 @@ export const GisMapPage: React.FC = () => {
       </div>
 
       {/* Leaflet Canvas */}
-      <div className="flex-1 rounded-xl overflow-hidden border border-slate-200 shadow-sm relative">
+      <div className="flex-1 rounded-2xl overflow-hidden border border-slate-200/80 shadow-saasable relative">
         <MapContainer center={[23.0225, 72.5714]} zoom={12} className="h-full w-full">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -129,7 +131,7 @@ export const GisMapPage: React.FC = () => {
             <Popup>
               <div className="text-xs font-sans space-y-1">
                 <p className="font-bold text-rose-600">Critical Coverage Gap Zone</p>
-                <p className="text-slate-700">Sarkhej Ward Corridor</p>
+                <p className="text-slate-700 font-medium">Sarkhej Ward Corridor</p>
                 <p className="text-slate-500 font-mono text-[11px]">Vulnerability Deficit: 83%</p>
               </div>
             </Popup>
@@ -141,18 +143,18 @@ export const GisMapPage: React.FC = () => {
               <Popup>
                 <div className="text-xs space-y-1.5 font-sans min-w-[180px]">
                   <div className="flex items-center justify-between">
-                    <p className="font-mono text-[11px] font-bold text-blue-700">{cam.camera_id}</p>
+                    <p className="font-mono text-[11px] font-bold text-indigo-600">{cam.camera_id}</p>
                     <CameraStatusBadge status={cam.status} />
                   </div>
-                  <p className="font-bold text-slate-900">{cam.camera_name}</p>
-                  <p className="text-slate-600">Dept: {cam.departments?.name || 'Surveillance'}</p>
+                  <p className="font-extrabold text-slate-900">{cam.camera_name}</p>
+                  <p className="text-slate-600 font-medium">Dept: {cam.departments?.name || 'Surveillance'}</p>
                   <p className="text-slate-500 font-mono text-[10px]">
                     Lat: {cam.latitude.toFixed(4)}, Lng: {cam.longitude.toFixed(4)}
                   </p>
-                  <div className="pt-2 border-t border-slate-200">
+                  <div className="pt-2 border-t border-slate-200/80">
                     <Link
                       to={`/cameras/${cam.id}`}
-                      className="block text-center py-1 px-2 rounded bg-blue-700 text-white font-semibold text-[11px] hover:bg-blue-800 transition"
+                      className="block text-center py-1.5 px-2 rounded-lg bg-indigo-600 text-white font-bold text-[11px] hover:bg-indigo-700 transition shadow-sm"
                     >
                       View Specs & Telemetry
                     </Link>

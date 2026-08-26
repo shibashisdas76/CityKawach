@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, Filter, Trash2, MapPin, Eye } from 'lucide-react';
+import { Plus, Search, Filter, Trash2, MapPin, Eye, Upload } from 'lucide-react';
 import { CameraStatusBadge } from '../../components/cameras/CameraStatusBadge';
 import { apiService } from '../../services/apiService';
 import { Camera } from '../../types/camera.types';
@@ -42,25 +42,26 @@ export const CameraListPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
-      {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+    <div className="space-y-6">
+      {/* Top Action Bar Header */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-saasable flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">State CCTV Camera Registry</h2>
-          <p className="text-xs text-slate-500">
-            Authoritative database of registered surveillance assets ({filtered.length} of {cameras.length} items)
+          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">State CCTV Camera Registry</h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Authoritative database of registered surveillance assets (<span className="font-semibold text-slate-700">{filtered.length}</span> of {cameras.length} items)
           </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2.5">
           <Link
             to="/cameras/import"
-            className="inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold px-3 py-2 rounded-lg transition"
+            className="inline-flex items-center space-x-2 bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm"
           >
+            <Upload className="w-3.5 h-3.5" />
             <span>Bulk CSV Import</span>
           </Link>
           <Link
             to="/cameras/new"
-            className="inline-flex items-center space-x-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition"
+            className="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4.5 py-2.5 rounded-xl shadow-md shadow-indigo-600/20 transition"
           >
             <Plus className="w-4 h-4" />
             <span>Register New Camera</span>
@@ -68,23 +69,23 @@ export const CameraListPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter Header */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-3">
+      {/* Filter Header Toolbar */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saasable flex flex-col md:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
             placeholder="Search by Camera ID, Junction, Ward, or District..."
-            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-xs bg-slate-50 focus:bg-white outline-none"
+            className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 outline-none transition"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center space-x-2 w-full md:w-auto">
-          <Filter className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+        <div className="flex items-center space-x-2.5 w-full md:w-auto">
+          <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <select
-            className="text-xs border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 font-medium"
+            className="text-xs border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-indigo-500 outline-none transition"
             value={deptFilter}
             onChange={(e) => setDeptFilter(e.target.value)}
           >
@@ -97,7 +98,7 @@ export const CameraListPage: React.FC = () => {
           </select>
 
           <select
-            className="text-xs border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 font-medium"
+            className="text-xs border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-indigo-500 outline-none transition"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -109,76 +110,76 @@ export const CameraListPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Camera Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* SaasAble Camera Data Table */}
+      <div className="saasable-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
+            <thead className="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-extrabold uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="px-4 py-3">Camera ID</th>
-                <th className="px-4 py-3">Asset Name</th>
-                <th className="px-4 py-3">Department</th>
-                <th className="px-4 py-3">Type</th>
-                <th className="px-4 py-3">District / Ward</th>
-                <th className="px-4 py-3">AI Features</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-5 py-3.5">Camera ID</th>
+                <th className="px-5 py-3.5">Asset Name</th>
+                <th className="px-5 py-3.5">Department</th>
+                <th className="px-5 py-3.5">Type</th>
+                <th className="px-5 py-3.5">District / Ward</th>
+                <th className="px-5 py-3.5">AI Features</th>
+                <th className="px-5 py-3.5">Status</th>
+                <th className="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-slate-400">
+                  <td colSpan={8} className="py-12 text-center text-slate-400 font-medium">
                     No camera assets matched your filters.
                   </td>
                 </tr>
               ) : (
                 filtered.map((cam) => (
-                  <tr key={cam.id} className="hover:bg-slate-50 transition">
-                    <td className="px-4 py-3 font-mono font-medium text-blue-700">
+                  <tr key={cam.id} className="hover:bg-indigo-50/30 transition-colors">
+                    <td className="px-5 py-3.5 font-mono font-bold text-indigo-600">
                       <Link to={`/cameras/${cam.id}`} className="hover:underline">
                         {cam.camera_id}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 font-medium text-slate-900">{cam.camera_name}</td>
-                    <td className="px-4 py-3 text-slate-600">{cam.departments?.name || 'Traffic Police'}</td>
-                    <td className="px-4 py-3 text-slate-600 font-mono text-[11px]">{cam.camera_type}</td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-5 py-3.5 font-bold text-slate-900">{cam.camera_name}</td>
+                    <td className="px-5 py-3.5 text-slate-600 font-medium">{cam.departments?.name || 'Traffic Police'}</td>
+                    <td className="px-5 py-3.5 text-slate-600 font-mono text-[11px] font-semibold">{cam.camera_type}</td>
+                    <td className="px-5 py-3.5 text-slate-600 font-medium">
                       {cam.district} {cam.ward ? `(${cam.ward})` : ''}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1">
+                    <td className="px-5 py-3.5">
+                      <div className="flex flex-wrap gap-1.5">
                         {(cam.ai_capabilities || ['ANPR']).map((ai) => (
-                          <span key={ai} className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-mono font-semibold border border-blue-200">
+                          <span key={ai} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md text-[10px] font-mono font-bold border border-indigo-100">
                             {ai}
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3.5">
                       <CameraStatusBadge status={cam.status as any} />
                     </td>
-                    <td className="px-4 py-3 text-right space-x-1">
+                    <td className="px-5 py-3.5 text-right space-x-1">
                       <Link
                         to={`/cameras/${cam.id}`}
-                        className="inline-flex p-1.5 text-slate-500 hover:text-blue-600 rounded hover:bg-slate-100"
+                        className="inline-flex p-1.5 text-slate-500 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition"
                         title="View Details"
                       >
-                        <Eye className="w-3.5 h-3.5" />
+                        <Eye className="w-4 h-4" />
                       </Link>
                       <Link
                         to={`/map?camId=${cam.id}`}
-                        className="inline-flex p-1.5 text-slate-500 hover:text-emerald-600 rounded hover:bg-slate-100"
+                        className="inline-flex p-1.5 text-slate-500 hover:text-emerald-600 rounded-lg hover:bg-emerald-50 transition"
                         title="Locate on Map"
                       >
-                        <MapPin className="w-3.5 h-3.5" />
+                        <MapPin className="w-4 h-4" />
                       </Link>
                       <button
                         onClick={() => handleDelete(cam.id, cam.camera_name)}
-                        className="inline-flex p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50"
+                        className="inline-flex p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition"
                         title="Delete Camera"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
                   </tr>

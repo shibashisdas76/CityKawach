@@ -71,12 +71,12 @@ export const ReportsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-1">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
-          <FileSpreadsheet className="w-5 h-5 text-blue-600" />
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-saasable space-y-1">
+        <h2 className="text-xl font-extrabold text-slate-900 flex items-center space-x-2.5 tracking-tight">
+          <FileSpreadsheet className="w-6 h-6 text-indigo-600" />
           <span>State Surveillance Reports & Data Export Portal</span>
         </h2>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 font-medium">
           Generate compliance documents, PostGIS spatial data packages, and state-level audit trails
         </p>
       </div>
@@ -84,25 +84,25 @@ export const ReportsPage: React.FC = () => {
       {/* Export Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Camera Registry Export */}
-        <div className="bg-white border border-slate-200 p-6 rounded-xl space-y-4 shadow-sm flex flex-col justify-between">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
-              <Database className="w-5 h-5" />
+        <div className="saasable-card p-6 space-y-4 flex flex-col justify-between">
+          <div className="space-y-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
+              <Database className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Authoritative Camera Registry CSV</h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Authoritative Camera Registry CSV</h3>
+              <p className="text-xs text-slate-500 mt-1 font-medium">
                 Full metadata dump including RTSP stream endpoints, IP addresses, hardware specs, and GIS coordinates.
               </p>
             </div>
-            <div className="text-xs font-mono text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200">
-              Total Records: <strong className="text-slate-900">{cameras.length} Assets</strong>
+            <div className="text-xs font-mono text-slate-600 bg-slate-50/70 p-3 rounded-xl border border-slate-200/80">
+              Total Records: <strong className="text-slate-900 font-extrabold">{cameras.length} Assets</strong>
             </div>
           </div>
 
           <button
             onClick={downloadCameraCsv}
-            className="w-full py-2.5 rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition shadow-sm"
+            className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs flex items-center justify-center space-x-2 transition shadow-md shadow-indigo-600/20"
           >
             <Download className="w-4 h-4" />
             <span>Export Camera Registry CSV</span>
@@ -110,25 +110,25 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         {/* Audit Compliance Export */}
-        <div className="bg-white border border-slate-200 p-6 rounded-xl space-y-4 shadow-sm flex flex-col justify-between">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-              <ShieldCheck className="w-5 h-5" />
+        <div className="saasable-card p-6 space-y-4 flex flex-col justify-between">
+          <div className="space-y-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
+              <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Audit & Compliance Ledger JSON</h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Audit & Compliance Ledger JSON</h3>
+              <p className="text-xs text-slate-500 mt-1 font-medium">
                 Append-only administrative action ledger with cryptographic timestamps and payload diffs.
               </p>
             </div>
-            <div className="text-xs font-mono text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200">
-              Ledger Size: <strong className="text-slate-900">{auditLogs.length} Events</strong>
+            <div className="text-xs font-mono text-slate-600 bg-slate-50/70 p-3 rounded-xl border border-slate-200/80">
+              Ledger Size: <strong className="text-slate-900 font-extrabold">{auditLogs.length} Events</strong>
             </div>
           </div>
 
           <button
             onClick={downloadAuditJson}
-            className="w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition shadow-sm"
+            className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center justify-center space-x-2 transition shadow-md shadow-emerald-600/20"
           >
             <Download className="w-4 h-4" />
             <span>Export Audit Ledger JSON</span>
@@ -136,25 +136,25 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         {/* Gap Intelligence Export */}
-        <div className="bg-white border border-slate-200 p-6 rounded-xl space-y-4 shadow-sm flex flex-col justify-between">
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
-              <Layers className="w-5 h-5" />
+        <div className="saasable-card p-6 space-y-4 flex flex-col justify-between">
+          <div className="space-y-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
+              <Layers className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Spatial Gap Intelligence Report CSV</h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Spatial Gap Intelligence Report CSV</h3>
+              <p className="text-xs text-slate-500 mt-1 font-medium">
                 Vulnerability Deficit Index (VDI) metrics and target camera density per urban ward.
               </p>
             </div>
-            <div className="text-xs font-mono text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200">
-              Target Zones: <strong className="text-slate-900">{zones.length} Sectors</strong>
+            <div className="text-xs font-mono text-slate-600 bg-slate-50/70 p-3 rounded-xl border border-slate-200/80">
+              Target Zones: <strong className="text-slate-900 font-extrabold">{zones.length} Sectors</strong>
             </div>
           </div>
 
           <button
             onClick={downloadGapReportCsv}
-            className="w-full py-2.5 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-bold text-xs flex items-center justify-center space-x-2 transition shadow-sm"
+            className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs flex items-center justify-center space-x-2 transition shadow-md shadow-indigo-600/20"
           >
             <Download className="w-4 h-4" />
             <span>Export Spatial Gap CSV</span>
@@ -163,11 +163,11 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Compliance Verification Note */}
-      <div className="p-4 rounded-xl bg-slate-900 text-white flex items-center space-x-3 text-xs font-mono">
+      <div className="p-4.5 rounded-2xl bg-slate-900 text-white flex items-center space-x-3 text-xs font-mono border border-slate-800 shadow-xl">
         <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
         <div>
-          <span className="font-bold text-emerald-400">State Compliance Standard Verified:</span>
-          <span className="text-slate-300 ml-1.5">
+          <span className="font-extrabold text-emerald-400">State Compliance Standard Verified:</span>
+          <span className="text-slate-300 ml-1.5 font-medium">
             Exports conform to Gujarat State Cyber Crime & Public Safety Interoperability Specification v1.0.
           </span>
         </div>
@@ -175,3 +175,4 @@ export const ReportsPage: React.FC = () => {
     </div>
   );
 };
+
