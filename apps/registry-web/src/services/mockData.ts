@@ -1,0 +1,217 @@
+import { Camera, CoverageZone } from '../types/camera.types';
+
+export const MOCK_DEPARTMENTS = [
+  { id: '11111111-1111-1111-1111-111111111111', code: 'DEPT-AMD-TRAFFIC', name: 'Traffic Police', district: 'Ahmedabad' },
+  { id: '22222222-2222-2222-2222-222222222222', code: 'DEPT-GND-SMART', name: 'Municipal Corp', district: 'Gandhinagar' },
+  { id: '33333333-3333-3333-3333-333333333333', code: 'DEPT-SRT-PORT', name: 'Transport Dept', district: 'Surat' },
+  { id: '44444444-4444-4444-4444-444444444444', code: 'DEPT-STATE-HQ', name: 'Civil Hospital', district: 'Gandhinagar' },
+];
+
+export const MOCK_CAMERAS: Camera[] = [
+  {
+    id: '1',
+    camera_id: 'GJ-AHM-POL-001',
+    camera_name: 'Income Tax Circle PTZ',
+    department_id: '11111111-1111-1111-1111-111111111111',
+    departments: { name: 'Traffic Police', code: 'DEPT-AMD-TRAFFIC' },
+    camera_type: 'PTZ',
+    latitude: 23.04028,
+    longitude: 72.56944,
+    address: 'Income Tax Circle',
+    district: 'Ahmedabad',
+    city: 'Ahmedabad',
+    ward: 'Navrangpura',
+    pin_code: '380009',
+    status: 'ONLINE',
+    connectivity_type: 'FIBER_OPTIC',
+    storage_type: 'EDGE_HYBRID',
+    resolution: '4K',
+    ip_address: '10.120.10.1',
+    rtsp_url: 'rtsp://admin:pass@10.120.10.1:554/live/ch0',
+    manufacturer: 'Hikvision',
+    model: 'DS-2DF8C442IXG-EL',
+    retention_days: 30,
+    installation_date: '2025-01-15',
+    created_at: '2025-01-15T10:00:00Z'
+  },
+  {
+    id: '2',
+    camera_id: 'GJ-AHM-POL-002',
+    camera_name: 'Nehru Bridge East Junction',
+    department_id: '11111111-1111-1111-1111-111111111111',
+    departments: { name: 'Traffic Police', code: 'DEPT-AMD-TRAFFIC' },
+    camera_type: 'ANPR_SPECIAL',
+    latitude: 23.0289,
+    longitude: 72.5783,
+    address: 'Nehru Bridge Road',
+    district: 'Ahmedabad',
+    city: 'Ahmedabad',
+    ward: 'Ellisbridge',
+    pin_code: '380006',
+    status: 'ONLINE',
+    connectivity_type: 'FIBER_OPTIC',
+    storage_type: 'CENTRAL_NVR',
+    resolution: '1080P',
+    ip_address: '10.120.10.2',
+    rtsp_url: 'rtsp://admin:pass@10.120.10.2:554/live/ch0',
+    manufacturer: 'Dahua',
+    model: 'ITC237-PW6M-ZLE',
+    retention_days: 30,
+    installation_date: '2025-02-01',
+    created_at: '2025-02-01T10:00:00Z'
+  },
+  {
+    id: '3',
+    camera_id: 'GJ-AHM-AMC-001',
+    camera_name: 'Kankaria Lake Gate 3',
+    department_id: '22222222-2222-2222-2222-222222222222',
+    departments: { name: 'Municipal Corp', code: 'DEPT-GND-SMART' },
+    camera_type: 'FIXED_DOME',
+    latitude: 23.0063,
+    longitude: 72.5997,
+    address: 'Kankaria Lake Front',
+    district: 'Ahmedabad',
+    city: 'Ahmedabad',
+    ward: 'Maninagar',
+    pin_code: '380008',
+    status: 'ONLINE',
+    connectivity_type: 'FIBER_OPTIC',
+    storage_type: 'CENTRAL_NVR',
+    resolution: '1080P',
+    ip_address: '10.120.10.3',
+    rtsp_url: 'rtsp://admin:pass@10.120.10.3:554/live/ch0',
+    manufacturer: 'Bosch',
+    model: 'FLEXIDOME IP starlight 8000i',
+    retention_days: 45,
+    installation_date: '2025-01-10',
+    created_at: '2025-01-10T10:00:00Z'
+  },
+  {
+    id: '4',
+    camera_id: 'GJ-AHM-AMC-002',
+    camera_name: 'Kalupur Station Entrance',
+    department_id: '22222222-2222-2222-2222-222222222222',
+    departments: { name: 'Municipal Corp', code: 'DEPT-GND-SMART' },
+    camera_type: 'PANORAMIC_360',
+    latitude: 23.0272,
+    longitude: 72.6011,
+    address: 'Kalupur Station Gate',
+    district: 'Ahmedabad',
+    city: 'Ahmedabad',
+    ward: 'Kalupur',
+    pin_code: '380002',
+    status: 'OFFLINE',
+    connectivity_type: '4G_5G_CELLULAR',
+    storage_type: 'EDGE_HYBRID',
+    resolution: '4K',
+    ip_address: '10.120.10.4',
+    rtsp_url: 'rtsp://admin:pass@10.120.10.4:554/live/ch0',
+    manufacturer: 'Axis',
+    model: 'P3719-PLE',
+    retention_days: 30,
+    installation_date: '2024-11-20',
+    created_at: '2024-11-20T10:00:00Z'
+  },
+  {
+    id: '5',
+    camera_id: 'GJ-GND-TRN-001',
+    camera_name: 'Gandhinagar Bus Bay 1',
+    department_id: '33333333-3333-3333-3333-333333333333',
+    departments: { name: 'Transport Dept', code: 'DEPT-SRT-PORT' },
+    camera_type: 'FIXED_BULLET',
+    latitude: 23.223,
+    longitude: 72.6492,
+    address: 'Central Bus Terminal',
+    district: 'Gandhinagar',
+    city: 'Gandhinagar',
+    ward: 'Sector 11',
+    pin_code: '382010',
+    status: 'MAINTENANCE',
+    connectivity_type: 'FIBER_OPTIC',
+    storage_type: 'CENTRAL_NVR',
+    resolution: '1080P',
+    ip_address: '10.130.20.1',
+    rtsp_url: 'rtsp://admin:pass@10.130.20.1:554/live/ch0',
+    manufacturer: 'CP PLUS',
+    model: 'CP-UNC-TA40L3',
+    retention_days: 30,
+    installation_date: '2025-02-10',
+    created_at: '2025-02-10T10:00:00Z'
+  }
+];
+
+export const MOCK_COVERAGE_ZONES: CoverageZone[] = [
+  {
+    id: 'z1',
+    zone_code: 'ZONE-AHM-01',
+    zone_name: 'Navrangpura Commercial Corridor',
+    district: 'Ahmedabad',
+    ward: 'Navrangpura',
+    priority_level: 1,
+    target_camera_density: 6.0,
+    actual_cameras: 5,
+    required_cameras: 10,
+    vulnerability_index: 0.5,
+    priority_tier: 'MEDIUM'
+  },
+  {
+    id: 'z2',
+    zone_code: 'ZONE-AHM-02',
+    zone_name: 'Ellisbridge Transit Zone',
+    district: 'Ahmedabad',
+    ward: 'Ellisbridge',
+    priority_level: 2,
+    target_camera_density: 8.0,
+    actual_cameras: 8,
+    required_cameras: 9,
+    vulnerability_index: 0.11,
+    priority_tier: 'LOW'
+  },
+  {
+    id: 'z3',
+    zone_code: 'ZONE-AHM-03',
+    zone_name: 'Sarkhej High Deficit Zone',
+    district: 'Ahmedabad',
+    ward: 'Sarkhej',
+    priority_level: 1,
+    target_camera_density: 5.0,
+    actual_cameras: 2,
+    required_cameras: 12,
+    vulnerability_index: 0.83,
+    priority_tier: 'CRITICAL'
+  }
+];
+
+export const MOCK_HEALTH_LOGS: Record<string, any[]> = {
+  '1': [
+    { id: 'h1', cameraId: '1', timestamp: new Date().toISOString(), status: 'ONLINE', latencyMs: 12, packetLossRate: 0, cpuUsagePercent: 22, memoryUsagePercent: 38, storageUsagePercent: 55, temperatureCelsius: 41 },
+    { id: 'h2', cameraId: '1', timestamp: new Date(Date.now() - 3600000).toISOString(), status: 'ONLINE', latencyMs: 14, packetLossRate: 0, cpuUsagePercent: 24, memoryUsagePercent: 39, storageUsagePercent: 55, temperatureCelsius: 42 }
+  ]
+};
+
+export const MOCK_AUDIT_LOGS: any[] = [
+  {
+    id: 'a101',
+    timestamp: new Date(Date.now() - 60000 * 30).toISOString(),
+    actorId: 'user_001',
+    actorName: 'Vikramaditya Sharma',
+    actorRole: 'STATE_ADMIN',
+    action: 'INITIALIZE_SCHEMA',
+    targetEntity: 'system',
+    targetId: 'postgis_v1',
+    ipAddress: '10.0.0.1',
+    metadataDiff: { status: 'initialized', version: '1.0.0' }
+  },
+  {
+    id: 'a102',
+    timestamp: new Date(Date.now() - 60000 * 15).toISOString(),
+    actorId: 'user_002',
+    actorName: 'Rajesh Shah',
+    actorRole: 'DEPARTMENT_ADMIN',
+    action: 'REGISTER_CAMERA',
+    targetEntity: 'cameras',
+    targetId: 'GJ-AHM-POL-001',
+    ipAddress: '10.120.0.45',
+    metadataDiff: { camera_id: 'GJ-AHM-POL-001', camera_name: 'Income Tax Circle PTZ', status: 'ONLINE' }
+  }
+];

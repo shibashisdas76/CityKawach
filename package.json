@@ -1,0 +1,14 @@
+{
+  "name": "cctv-central-platform",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm --prefix apps/registry-web run dev",
+    "build": "npm --prefix apps/registry-web run build",
+    "preview": "npm --prefix apps/registry-web run preview",
+    "typecheck": "npm --prefix apps/registry-web run typecheck"
+  }
+}
