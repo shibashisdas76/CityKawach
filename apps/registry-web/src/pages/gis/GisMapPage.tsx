@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { CameraStatusBadge } from '@/components/cameras/CameraStatusBadge';
-import { MOCK_CAMERAS, MOCK_DEPARTMENTS } from '@/services/mockData';
-import { Camera } from '@/types/camera.types';
+import { CameraStatusBadge } from '../../components/cameras/CameraStatusBadge';
+import { apiService } from '../../services/apiService';
+import { Camera } from '../../types/camera.types';
 
 // Custom status marker icon creator
 const customMarker = (status: string) => {
@@ -39,18 +39,28 @@ export const GisMapPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const camIdParam = searchParams.get('camId');
 
+  const [cameras, setCameras] = useState<Camera[]>(apiService.getCameras());
   const [selectedDept, setSelectedDept] = useState<string>('ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [targetCam, setTargetCam] = useState<Camera | null>(null);
 
   useEffect(() => {
+    const unsubscribe = apiService.subscribe(() => {
+      setCameras(apiService.getCameras());
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     if (camIdParam) {
-      const found = MOCK_CAMERAS.find((c) => c.id === camIdParam || c.camera_id === camIdParam);
+      const found = cameras.find((c) => c.id === camIdParam || c.camera_id === camIdParam);
       if (found) setTargetCam(found);
     }
-  }, [camIdParam]);
+  }, [camIdParam, cameras]);
 
-  const filteredCameras = MOCK_CAMERAS.filter((c) => {
+  const departments = apiService.getDepartments();
+
+  const filteredCameras = cameras.filter((c) => {
     if (selectedDept !== 'ALL' && c.department_id !== selectedDept && c.departments?.name !== selectedDept) {
       return false;
     }
@@ -77,7 +87,7 @@ export const GisMapPage: React.FC = () => {
               onChange={(e) => setSelectedDept(e.target.value)}
             >
               <option value="ALL">All Departments</option>
-              {MOCK_DEPARTMENTS.map((d) => (
+              {departments.map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.name}
                 </option>

@@ -6,7 +6,11 @@
     "lib": ["ESNext", "DOM"],
     "strict": true,
     "skipLibCheck": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "baseUrl": ".",
+    "paths": {
+      "@supabase/supabase-js": ["../apps/registry-web/node_modules/@supabase/supabase-js"]
+    }
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "deno.d.ts"]
 }

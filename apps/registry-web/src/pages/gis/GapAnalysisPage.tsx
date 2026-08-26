@@ -1,37 +1,24 @@
-import React, { useState } from 'react';
-import { MOCK_COVERAGE_ZONES, MOCK_CAMERAS } from '../../services/supabaseClient';
+import React, { useState, useEffect } from 'react';
+import { apiService } from '../../services/apiService';
 import { CoverageZone } from '../../types/camera.types';
 import { ShieldAlert, RefreshCw, Calculator } from 'lucide-react';
 
 export const GapAnalysisPage: React.FC = () => {
-  const [zones, setZones] = useState<CoverageZone[]>(MOCK_COVERAGE_ZONES);
+  const [zones, setZones] = useState<CoverageZone[]>(apiService.getCoverageZones());
   const [isRecalculating, setIsRecalculating] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = apiService.subscribe(() => {
+      setZones(apiService.getCoverageZones());
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleRecalculateGaps = () => {
     setIsRecalculating(true);
     setTimeout(() => {
-      const updated: CoverageZone[] = zones.map((z: CoverageZone) => {
-        const matchingCams = MOCK_CAMERAS.filter((c: any) => c.district === z.district);
-        const actual = matchingCams.length;
-        const required = z.required_cameras || Math.max(1, Math.round(z.target_camera_density * 2));
-        const vdi = Math.max(0, Math.min(1, 1.0 - (actual / required)));
-
-        let tier: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
-        if (vdi > 0.7) tier = 'CRITICAL';
-        else if (vdi > 0.4) tier = 'HIGH';
-        else if (vdi > 0.2) tier = 'MEDIUM';
-
-        return {
-          ...z,
-          actual_cameras: actual,
-          vulnerability_index: parseFloat(vdi.toFixed(2)),
-          priority_tier: tier
-        };
-      });
-
-      setZones(updated);
+      apiService.recalculateGaps();
       setIsRecalculating(false);
-      alert('PostGIS gap recalculation executed successfully!');
     }, 400);
   };
 

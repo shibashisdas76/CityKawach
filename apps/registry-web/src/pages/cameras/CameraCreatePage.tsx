@@ -5,7 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { MOCK_DEPARTMENTS, MOCK_CAMERAS, MOCK_AUDIT_LOGS } from '../../services/supabaseClient';
+import { MOCK_DEPARTMENTS } from '../../services/supabaseClient';
+import { apiService } from '../../services/apiService';
 import { Camera, CameraType, CameraStatus } from '../../types/camera.types';
 import {
   ArrowLeft,
@@ -73,7 +74,7 @@ export const CameraCreatePage: React.FC = () => {
   } = useForm<CameraFormData>({
     resolver: zodResolver(cameraSchema),
     defaultValues: {
-      camera_id: `GJ-AHM-POL-00${MOCK_CAMERAS.length + 1}`,
+      camera_id: `GJ-AHM-POL-00${apiService.getCameras().length + 1}`,
       camera_name: '',
       department_id: MOCK_DEPARTMENTS[0].id,
       camera_type: 'PTZ',
@@ -119,23 +120,13 @@ export const CameraCreatePage: React.FC = () => {
       rtsp_url: data.rtsp_url,
       retention_days: 30,
       installation_date: new Date().toISOString().split('T')[0],
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      ai_capabilities: ['ANPR', 'MOTION_DETECT'],
+      ping_latency_ms: 10,
+      stream_status: 'ACTIVE'
     };
 
-    MOCK_CAMERAS.unshift(newCam);
-
-    MOCK_AUDIT_LOGS.unshift({
-      id: `a-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      actorId: 'user_001',
-      actorName: 'State Admin Officer',
-      actorRole: 'STATE_ADMIN',
-      action: 'REGISTER_CAMERA',
-      targetEntity: 'cameras',
-      targetId: newCam.camera_id,
-      ipAddress: '127.0.0.1',
-      metadataDiff: { camera_id: newCam.camera_id, camera_name: newCam.camera_name, status: newCam.status }
-    });
+    apiService.addCamera(newCam);
 
     alert(`Camera ${newCam.camera_id} registered successfully!`);
     navigate('/cameras');

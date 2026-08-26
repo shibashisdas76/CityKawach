@@ -10,8 +10,11 @@ import {
   FileSpreadsheet,
   ShieldCheck,
   PlusCircle,
-  Upload
+  Upload,
+  UserCheck
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { UserRole } from '@shared/types/cctv-metadata.contract';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -27,6 +30,8 @@ const navigation = [
 ];
 
 export const AppLayout: React.FC = () => {
+  const { currentUser, setRole } = useAuth();
+
   return (
     <div className="min-h-screen flex bg-[#F8FAFC]">
       {/* Sidebar */}
@@ -73,14 +78,30 @@ export const AppLayout: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between shadow-sm">
-          <div className="text-xs font-medium text-slate-500">
-            Gujarat Integrated Public Safety Infrastructure Portal
+          <div className="text-xs font-medium text-slate-500 flex items-center space-x-2">
+            <span>Gujarat Integrated Public Safety Infrastructure Portal</span>
           </div>
+
           <div className="flex items-center space-x-4">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-800">
-              STATE_ADMIN
+            <div className="flex items-center space-x-2 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
+              <UserCheck className="w-3.5 h-3.5 text-blue-600" />
+              <label className="text-[11px] font-bold text-slate-600">Active Role:</label>
+              <select
+                value={currentUser.role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+                className="text-xs font-mono font-bold bg-transparent text-blue-700 focus:outline-none cursor-pointer"
+              >
+                <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                <option value="STATE_ADMIN">STATE_ADMIN</option>
+                <option value="DEPARTMENT_ADMIN">DEPARTMENT_ADMIN</option>
+                <option value="OPERATOR">OPERATOR</option>
+                <option value="VIEWER">VIEWER</option>
+              </select>
+            </div>
+
+            <span className="text-xs text-slate-700 font-medium">
+              {currentUser.fullName} ({currentUser.badgeNumber})
             </span>
-            <span className="text-xs text-slate-700 font-medium">Control Officer #441</span>
           </div>
         </header>
 

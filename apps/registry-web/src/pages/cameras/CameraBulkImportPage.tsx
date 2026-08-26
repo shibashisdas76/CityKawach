@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Papa from 'papaparse';
 import { z } from 'zod';
-import { MOCK_CAMERAS, MOCK_DEPARTMENTS, MOCK_AUDIT_LOGS } from '../../services/supabaseClient';
+import { MOCK_DEPARTMENTS } from '../../services/supabaseClient';
+import { apiService } from '../../services/apiService';
 import { Camera, CameraType, CameraStatus } from '../../types/camera.types';
 import {
   ArrowLeft,
@@ -91,11 +92,11 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
       return;
     }
 
-    validRows.forEach(r => {
+    const newCameras: Camera[] = validRows.map(r => {
       const data = r.data;
       const dept = MOCK_DEPARTMENTS.find((d: any) => d.code === data.departmentCode) || MOCK_DEPARTMENTS[0];
 
-      const newCam: Camera = {
+      return {
         id: `c-bulk-${Date.now()}-${r.rowIndex}`,
         camera_id: data.camera_id,
         camera_name: data.camera_name,
@@ -117,26 +118,16 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
         rtsp_url: data.rtsp_url,
         retention_days: 30,
         installation_date: new Date().toISOString().split('T')[0],
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        ai_capabilities: ['ANPR', 'CROWD_DENSITY'],
+        ping_latency_ms: 14,
+        stream_status: 'ACTIVE'
       };
-
-      MOCK_CAMERAS.unshift(newCam);
     });
 
-    MOCK_AUDIT_LOGS.unshift({
-      id: `a-bulk-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      actorId: 'user_001',
-      actorName: 'State Admin Officer',
-      actorRole: 'STATE_ADMIN',
-      action: 'BULK_CSV_IMPORT',
-      targetEntity: 'cameras',
-      targetId: `batch_${validRows.length}`,
-      ipAddress: '127.0.0.1',
-      metadataDiff: { file_name: fileName, imported_count: validRows.length }
-    });
+    apiService.bulkAddCameras(newCameras);
 
-    alert(`Successfully imported ${validRows.length} camera records!`);
+    alert(`Successfully imported ${newCameras.length} camera records into central registry!`);
     navigate('/cameras');
   };
 

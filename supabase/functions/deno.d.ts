@@ -9,9 +9,75 @@ declare namespace Deno {
 }
 
 declare module "https://esm.sh/@supabase/supabase-js@2" {
-  export * from "@supabase/supabase-js";
+  export type SupabaseClient<Database = any> = {
+    from(relation: string): any;
+    schema(schema: string): any;
+    rpc(fn: string, args?: any): any;
+    auth: any;
+    storage: any;
+    functions: any;
+  };
+
+  export function createClient<Database = any>(
+    supabaseUrl: string,
+    supabaseKey: string,
+    options?: any
+  ): SupabaseClient<Database>;
+}
+
+declare module "https://esm.sh/@supabase/supabase-js*" {
+  export type SupabaseClient<Database = any> = {
+    from(relation: string): any;
+    schema(schema: string): any;
+    rpc(fn: string, args?: any): any;
+    auth: any;
+    storage: any;
+    functions: any;
+  };
+
+  export function createClient<Database = any>(
+    supabaseUrl: string,
+    supabaseKey: string,
+    options?: any
+  ): SupabaseClient<Database>;
 }
 
 declare module "npm:@supabase/supabase-js@2" {
-  export * from "@supabase/supabase-js";
+  export type SupabaseClient<Database = any> = {
+    from(relation: string): any;
+    schema(schema: string): any;
+    rpc(fn: string, args?: any): any;
+    auth: any;
+    storage: any;
+    functions: any;
+  };
+
+  export function createClient<Database = any>(
+    supabaseUrl: string,
+    supabaseKey: string,
+    options?: any
+  ): SupabaseClient<Database>;
 }
+
+declare module "npm:@supabase/supabase-js*" {
+  export type SupabaseClient<Database = any> = {
+    from(relation: string): any;
+    schema(schema: string): any;
+    rpc(fn: string, args?: any): any;
+    auth: any;
+    storage: any;
+    functions: any;
+  };
+
+  export function createClient<Database = any>(
+    supabaseUrl: string,
+    supabaseKey: string,
+    options?: any
+  ): SupabaseClient<Database>;
+}
+
+
+
+
+
+

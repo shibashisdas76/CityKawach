@@ -8,6 +8,8 @@ export type CameraType =
     | 'THERMAL'
     | 'PANORAMIC_360';
 
+export type AICapability = 'ANPR' | 'CROWD_DENSITY' | 'INTRUSION' | 'THERMAL_ANOMALY' | 'FACIAL_RECOG' | 'MOTION_DETECT';
+
 export interface Camera {
     id: string;
     camera_id: string;
@@ -34,6 +36,21 @@ export interface Camera {
     retention_days: number;
     installation_date: string;
     created_at: string;
+    ai_capabilities?: AICapability[];
+    ping_latency_ms?: number;
+    stream_status?: 'ACTIVE' | 'BUFFERING' | 'DISCONNECTED';
+}
+
+export interface CriticalAlert {
+    id: string;
+    camera_id: string;
+    camera_name: string;
+    alert_type: 'ANPR_WATCHLIST_MATCH' | 'CROWD_SURGE_DETECTED' | 'UNAUTHORIZED_INTRUSION' | 'FIRE_SMOKE_HAZARD' | 'OFFLINE_DISCONNECT';
+    timestamp: string;
+    severity: 'HIGH' | 'CRITICAL' | 'MEDIUM';
+    resolved: boolean;
+    confidence_score?: number;
+    bounding_box_details?: string;
 }
 
 export interface CoverageZone {
@@ -48,4 +65,4 @@ export interface CoverageZone {
     required_cameras?: number;
     vulnerability_index?: number;
     priority_tier?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-}
+}

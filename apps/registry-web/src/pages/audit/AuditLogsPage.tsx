@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { MOCK_AUDIT_LOGS } from '../../services/supabaseClient';
+import React, { useState, useEffect } from 'react';
+import { apiService } from '../../services/apiService';
 import { FileSpreadsheet, Lock, Clock, Code, X } from 'lucide-react';
 
 export const AuditLogsPage: React.FC = () => {
+  const [logs, setLogs] = useState(apiService.getAuditLogs());
   const [selectedLog, setSelectedLog] = useState<any | null>(null);
   const [filterAction, setFilterAction] = useState<string>('ALL');
 
-  const filteredLogs = MOCK_AUDIT_LOGS.filter((log: any) => {
+  useEffect(() => {
+    const unsubscribe = apiService.subscribe(() => {
+      setLogs(apiService.getAuditLogs());
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const filteredLogs = logs.filter((log: any) => {
     if (filterAction !== 'ALL' && log.action !== filterAction) return false;
     return true;
   });

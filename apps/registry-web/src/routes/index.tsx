@@ -9,6 +9,9 @@ import { CameraDetailPage } from '../pages/cameras/CameraDetailPage';
 import { GisMapPage } from '../pages/gis/GisMapPage';
 import { GapAnalysisPage } from '../pages/gis/GapAnalysisPage';
 import { AuditLogsPage } from '../pages/audit/AuditLogsPage';
+import { HealthTelemetryPage } from '../pages/health/HealthTelemetryPage';
+import { DepartmentsPage } from '../pages/departments/DepartmentsPage';
+import { ReportsPage } from '../pages/reports/ReportsPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -21,10 +24,10 @@ export const AppRoutes: React.FC = () => {
         <Route path="cameras/import" element={<CameraBulkImportPage />} />
         <Route path="cameras/:id" element={<CameraDetailPage />} />
         <Route path="map" element={<GisMapPage />} />
-        <Route path="health" element={<CameraDetailPage />} />
+        <Route path="health" element={<HealthTelemetryPage />} />
         <Route path="gap-analysis" element={<GapAnalysisPage />} />
-        <Route path="departments" element={<CameraListPage />} />
-        <Route path="reports" element={<AuditLogsPage />} />
+        <Route path="departments" element={<DepartmentsPage />} />
+        <Route path="reports" element={<ReportsPage />} />
         <Route path="audit-logs" element={<AuditLogsPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>

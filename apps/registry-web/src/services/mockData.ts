@@ -32,7 +32,10 @@ export const MOCK_CAMERAS: Camera[] = [
     model: 'DS-2DF8C442IXG-EL',
     retention_days: 30,
     installation_date: '2025-01-15',
-    created_at: '2025-01-15T10:00:00Z'
+    created_at: '2025-01-15T10:00:00Z',
+    ai_capabilities: ['CROWD_DENSITY', 'MOTION_DETECT'],
+    ping_latency_ms: 12,
+    stream_status: 'ACTIVE'
   },
   {
     id: '2',

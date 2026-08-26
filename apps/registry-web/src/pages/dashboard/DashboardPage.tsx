@@ -1,22 +1,45 @@
-import React from 'react';
-import { Video, CheckCircle2, XCircle, AlertTriangle, Building, Layers } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Video, CheckCircle2, XCircle, AlertTriangle, Layers } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
-import { SurveillanceAlertTab } from '../../components/alerts/SurveillanceAlertTab'; // <-- New Import
-
-const statusData = [
-  { name: 'Online', count: 68, color: '#10B981' },
-  { name: 'Offline', count: 8, color: '#EF4444' },
-  { name: 'Maintenance', count: 4, color: '#F59E0B' },
-];
-
-const departmentData = [
-  { dept: 'Traffic Police', cameras: 35 },
-  { dept: 'Municipal Corp', cameras: 22 },
-  { dept: 'Transport Dept', cameras: 15 },
-  { dept: 'Civil Hospital', cameras: 8 },
-];
+import { SurveillanceAlertTab } from '../../components/alerts/SurveillanceAlertTab';
+import { apiService } from '../../services/apiService';
 
 export const DashboardPage: React.FC = () => {
+  const [cameras, setCameras] = useState(apiService.getCameras());
+  const [zones, setZones] = useState(apiService.getCoverageZones());
+
+  useEffect(() => {
+    const unsubscribe = apiService.subscribe(() => {
+      setCameras(apiService.getCameras());
+      setZones(apiService.getCoverageZones());
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const totalCameras = cameras.length;
+  const onlineCount = cameras.filter((c) => c.status === 'ONLINE').length;
+  const offlineCount = cameras.filter((c) => c.status === 'OFFLINE').length;
+  const maintenanceCount = cameras.filter((c) => c.status === 'MAINTENANCE').length;
+  const unknownCount = totalCameras - onlineCount - offlineCount - maintenanceCount;
+
+  const operationalPct = totalCameras > 0 ? Math.round((onlineCount / totalCameras) * 100) : 0;
+
+  // Department distribution
+  const departments = apiService.getDepartments();
+  const departmentData = departments.map((d) => ({
+    dept: d.name,
+    cameras: cameras.filter((c) => c.department_id === d.id || c.departments?.name === d.name).length
+  }));
+
+  const statusData = [
+    { name: 'Online', count: onlineCount, color: '#10B981' },
+    { name: 'Offline', count: offlineCount, color: '#EF4444' },
+    { name: 'Maintenance', count: maintenanceCount, color: '#F59E0B' },
+    { name: 'Unknown', count: Math.max(0, unknownCount), color: '#6B7280' }
+  ].filter((item) => item.count > 0);
+
+  const criticalGapsCount = zones.filter((z) => (z.vulnerability_index || 0) > 0.4).length;
+
   return (
     <div className="space-y-6">
       {/* Top Banner */}
@@ -35,11 +58,11 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold">Total Cameras</span>
+            <span className="text-xs font-semibold">Total Registered Assets</span>
             <Video className="w-4 h-4 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-slate-900 mt-2">80</p>
-          <p className="text-[11px] text-slate-400 mt-1">Across 4 Departments</p>
+          <p className="text-2xl font-bold text-slate-900 mt-2">{totalCameras}</p>
+          <p className="text-[11px] text-slate-400 mt-1">Across {departments.length} Departments</p>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -47,8 +70,8 @@ export const DashboardPage: React.FC = () => {
             <span className="text-xs font-semibold">Operational</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-emerald-600 mt-2">68</p>
-          <p className="text-[11px] text-emerald-600 font-medium mt-1">85% Operational</p>
+          <p className="text-2xl font-bold text-emerald-600 mt-2">{onlineCount}</p>
+          <p className="text-[11px] text-emerald-600 font-medium mt-1">{operationalPct}% Operational Rate</p>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -56,7 +79,7 @@ export const DashboardPage: React.FC = () => {
             <span className="text-xs font-semibold">Critical Offline</span>
             <XCircle className="w-4 h-4 text-rose-600" />
           </div>
-          <p className="text-2xl font-bold text-rose-600 mt-2">8</p>
+          <p className="text-2xl font-bold text-rose-600 mt-2">{offlineCount}</p>
           <p className="text-[11px] text-rose-500 font-medium mt-1">Action Required</p>
         </div>
 
@@ -65,17 +88,17 @@ export const DashboardPage: React.FC = () => {
             <span className="text-xs font-semibold">In Maintenance</span>
             <AlertTriangle className="w-4 h-4 text-amber-500" />
           </div>
-          <p className="text-2xl font-bold text-amber-500 mt-2">4</p>
+          <p className="text-2xl font-bold text-amber-500 mt-2">{maintenanceCount}</p>
           <p className="text-[11px] text-slate-400 mt-1">Scheduled repairs</p>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold">Coverage Deficit</span>
+            <span className="text-xs font-semibold">VDI Gaps</span>
             <Layers className="w-4 h-4 text-indigo-600" />
           </div>
-          <p className="text-2xl font-bold text-indigo-600 mt-2">42%</p>
-          <p className="text-[11px] text-rose-500 font-medium mt-1">3 High-Priority Gaps</p>
+          <p className="text-2xl font-bold text-indigo-600 mt-2">{criticalGapsCount}</p>
+          <p className="text-[11px] text-rose-500 font-medium mt-1">Priority Deficit Zones</p>
         </div>
       </div>
 
