@@ -53,7 +53,7 @@ export const CameraDetailPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <Link
           to="/cameras"
-          className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition"
+          className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 hover:text-blue-600 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Camera Registry</span>
@@ -65,12 +65,12 @@ export const CameraDetailPage: React.FC = () => {
             disabled={pinging}
             className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center space-x-2 transition shadow-sm"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-indigo-600 ${pinging ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${pinging ? 'animate-spin' : ''}`} />
             <span>Test Ping Latency</span>
           </button>
           <Link
             to={`/map?camId=${camera.id}`}
-            className="px-4 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-semibold flex items-center space-x-2 transition shadow-md shadow-indigo-600/20"
+            className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 text-xs font-semibold flex items-center space-x-2 transition shadow-sm"
           >
             <MapPin className="w-4 h-4" />
             <span>Locate on GIS Map</span>
@@ -79,28 +79,28 @@ export const CameraDetailPage: React.FC = () => {
       </div>
 
       {/* Hero Header */}
-      <div className="saasable-card p-6 space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start space-x-4">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 shadow-sm">
               <Video className="w-7 h-7" />
             </div>
             <div>
               <div className="flex items-center space-x-3">
-                <span className="text-xs font-mono font-extrabold text-indigo-700 px-2.5 py-0.5 rounded-lg bg-indigo-50 border border-indigo-100">
+                <span className="text-xs font-mono font-bold text-blue-700 px-2.5 py-0.5 rounded-lg bg-blue-50 border border-blue-100">
                   {camera.camera_id}
                 </span>
                 <CameraStatusBadge status={camera.status} />
               </div>
-              <h2 className="text-xl font-extrabold text-slate-900 mt-1 tracking-tight">{camera.camera_name}</h2>
+              <h2 className="text-xl font-bold text-slate-900 mt-1 tracking-tight">{camera.camera_name}</h2>
               <p className="text-xs text-slate-500 mt-0.5 flex items-center space-x-1.5 font-medium">
-                <MapPin className="w-3.5 h-3.5 text-indigo-600" />
+                <MapPin className="w-3.5 h-3.5 text-blue-600" />
                 <span>{camera.address} • {camera.ward}, {camera.district}, Gujarat</span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4 bg-slate-50/70 p-4 rounded-xl border border-slate-200/80 text-xs font-mono">
+          <div className="flex items-center space-x-4 bg-slate-50 p-4 rounded-xl border border-slate-200/80 text-xs font-mono">
             <div>
               <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">DEPARTMENT</div>
               <div className="text-slate-900 font-bold mt-0.5">{camera.departments?.name || 'Traffic Police'}</div>
@@ -124,7 +124,7 @@ export const CameraDetailPage: React.FC = () => {
         {/* Stream Canvas + Tech Specs */}
         <div className="lg:col-span-2 space-y-6">
           {/* Simulated Live RTSP Video Player */}
-          <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl space-y-0 relative">
+          <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-lg space-y-0 relative">
             <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex justify-between items-center text-xs font-mono text-slate-300">
               <span className="flex items-center space-x-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
@@ -134,7 +134,7 @@ export const CameraDetailPage: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setAiOverlay(!aiOverlay)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition ${aiOverlay ? 'bg-indigo-900/60 text-indigo-300 border-indigo-700' : 'bg-slate-800 text-slate-400 border-slate-700'}`}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition ${aiOverlay ? 'bg-blue-950 text-blue-400 border-blue-700' : 'bg-slate-800 text-slate-400 border-slate-700'}`}
                 >
                   AI Overlay {aiOverlay ? 'ON' : 'OFF'}
                 </button>
@@ -145,7 +145,7 @@ export const CameraDetailPage: React.FC = () => {
             {/* Video Canvas Container */}
             <div className="h-72 bg-gradient-to-br from-slate-900 via-slate-950 to-black relative flex items-center justify-center overflow-hidden">
               {/* Grid Lines */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#818cf8_1px,transparent_1px)] [background-size:16px_16px]" />
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]" />
 
               {/* Bounding Box Visual Overlays when AI is enabled */}
               {aiOverlay && (
@@ -153,7 +153,7 @@ export const CameraDetailPage: React.FC = () => {
                   <div className="absolute top-12 left-16 border-2 border-emerald-400/80 bg-emerald-500/10 rounded-lg p-1.5 text-[10px] font-mono text-emerald-300 shadow-lg">
                     <span>VEHICLE: GJ-01-AB-1234 (98%)</span>
                   </div>
-                  <div className="absolute bottom-16 right-24 border-2 border-indigo-400/80 bg-indigo-500/10 rounded-lg p-1.5 text-[10px] font-mono text-indigo-300 shadow-lg">
+                  <div className="absolute bottom-16 right-24 border-2 border-blue-400/80 bg-blue-500/10 rounded-lg p-1.5 text-[10px] font-mono text-blue-300 shadow-lg">
                     <span>PEDESTRIAN (92%)</span>
                   </div>
                   <div className="absolute top-8 right-12 text-[10px] font-mono text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-700">
@@ -163,7 +163,7 @@ export const CameraDetailPage: React.FC = () => {
               )}
 
               <div className="text-center space-y-2 z-10">
-                <Play className="w-10 h-10 text-indigo-500 mx-auto opacity-80 animate-pulse" />
+                <Play className="w-10 h-10 text-blue-500 mx-auto opacity-80 animate-pulse" />
                 <p className="text-xs font-mono text-slate-400">RTSP Stream Ingestion Pipeline Operational</p>
                 <p className="text-[11px] font-mono text-emerald-400 font-semibold">{camera.rtsp_url}</p>
               </div>
@@ -171,46 +171,46 @@ export const CameraDetailPage: React.FC = () => {
           </div>
 
           {/* Technical Specs Card */}
-          <div className="saasable-card p-6 space-y-6">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <h3 className="text-sm font-extrabold text-slate-900 flex items-center space-x-2 tracking-tight">
-                <Server className="w-4 h-4 text-indigo-600" />
+              <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2 tracking-tight">
+                <Server className="w-4 h-4 text-blue-600" />
                 <span>Hardware & Technical Specifications</span>
               </h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
                 <div className="text-slate-400 font-mono text-[10px] uppercase font-bold tracking-wider">CAMERA HARDWARE TYPE</div>
-                <div className="text-sm font-extrabold text-slate-900 mt-1">{camera.camera_type}</div>
+                <div className="text-sm font-bold text-slate-900 mt-1">{camera.camera_type}</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
                 <div className="text-slate-400 font-mono text-[10px] uppercase font-bold tracking-wider">CONNECTIVITY & STORAGE</div>
-                <div className="text-sm font-extrabold text-slate-900 mt-1">{camera.connectivity_type} • {camera.storage_type}</div>
+                <div className="text-sm font-bold text-slate-900 mt-1">{camera.connectivity_type} • {camera.storage_type}</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
                 <div className="text-slate-400 font-mono text-[10px] uppercase font-bold tracking-wider">IP ADDRESS</div>
-                <div className="text-sm font-extrabold text-slate-900 mt-1 font-mono">{camera.ip_address || '10.120.10.1'}</div>
+                <div className="text-sm font-bold text-slate-900 mt-1 font-mono">{camera.ip_address || '10.120.10.1'}</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80">
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
                 <div className="text-slate-400 font-mono text-[10px] uppercase font-bold tracking-wider">RETENTION PERIOD</div>
-                <div className="text-sm font-extrabold text-slate-900 mt-1">{camera.retention_days} Days</div>
+                <div className="text-sm font-bold text-slate-900 mt-1">{camera.retention_days} Days</div>
               </div>
             </div>
 
             {/* AI Capabilities */}
             <div className="space-y-2.5">
               <div className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                <Cpu className="w-4 h-4 text-indigo-600" />
+                <Cpu className="w-4 h-4 text-blue-600" />
                 <span>Assigned AI & Computer Vision Pipelines</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {(camera.ai_capabilities || ['ANPR', 'CROWD_DENSITY', 'MOTION_DETECT']).map((cap) => (
-                  <span key={cap} className="px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 font-mono text-xs font-bold inline-flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 text-indigo-600" />
+                  <span key={cap} className="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 font-mono text-xs font-semibold inline-flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-blue-600" />
                     <span>{cap.replace(/_/g, ' ')}</span>
                   </span>
                 ))}
@@ -219,10 +219,10 @@ export const CameraDetailPage: React.FC = () => {
 
             {/* RTSP Stream Endpoint */}
             {camera.rtsp_url && (
-              <div className="p-4 rounded-xl bg-slate-900 text-white space-y-2.5 shadow-lg border border-slate-800">
+              <div className="p-4 rounded-xl bg-slate-900 text-white space-y-2.5 shadow-sm border border-slate-800">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-indigo-400 font-bold flex items-center space-x-1.5">
-                    <Radio className="w-3.5 h-3.5 animate-pulse text-indigo-400" />
+                  <span className="text-blue-400 font-bold flex items-center space-x-1.5">
+                    <Radio className="w-3.5 h-3.5 animate-pulse text-blue-400" />
                     <span>RTSP Stream Endpoint</span>
                   </span>
                   <button
@@ -242,11 +242,11 @@ export const CameraDetailPage: React.FC = () => {
         </div>
 
         {/* Telemetry Logs Sidebar Card */}
-        <div className="saasable-card p-6 space-y-4 flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
-              <h3 className="text-sm font-extrabold text-slate-900 flex items-center space-x-2 tracking-tight">
-                <Activity className="w-4 h-4 text-indigo-600" />
+              <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2 tracking-tight">
+                <Activity className="w-4 h-4 text-blue-600" />
                 <span>Health Telemetry Logs</span>
               </h3>
             </div>
@@ -258,10 +258,10 @@ export const CameraDetailPage: React.FC = () => {
             ) : (
               <div className="space-y-3 font-mono text-xs">
                 {healthLogs.map((log: any) => (
-                  <div key={log.id} className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2.5">
+                  <div key={log.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2.5">
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-slate-500 flex items-center space-x-1 font-medium">
-                        <Clock className="w-3.5 h-3.5 text-indigo-600" />
+                        <Clock className="w-3.5 h-3.5 text-blue-600" />
                         <span>{new Date(log.timestamp).toLocaleTimeString()}</span>
                       </span>
                       <CameraStatusBadge status={log.status} />

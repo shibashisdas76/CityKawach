@@ -138,19 +138,19 @@ export const CameraCreatePage: React.FC = () => {
       <div className="flex items-center justify-between">
         <Link
           to="/cameras"
-          className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition"
+          className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 hover:text-blue-600 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Camera Registry</span>
         </Link>
-        <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50 px-3.5 py-1.5 rounded-xl border border-indigo-100">
+        <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3.5 py-1.5 rounded-xl border border-blue-100">
           Camera Registration Wizard
         </span>
       </div>
 
-      <div className="saasable-card p-6 space-y-2">
-        <h2 className="text-xl font-extrabold text-slate-900 flex items-center space-x-2.5 tracking-tight">
-          <PlusCircle className="w-6 h-6 text-indigo-600" />
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+        <h2 className="text-xl font-bold text-slate-900 flex items-center space-x-2.5 tracking-tight">
+          <PlusCircle className="w-6 h-6 text-blue-600" />
           <span>Register New CCTV Surveillance Asset</span>
         </h2>
         <p className="text-xs text-slate-500 font-medium">
@@ -162,8 +162,8 @@ export const CameraCreatePage: React.FC = () => {
             type="button"
             onClick={() => setCurrentStep(1)}
             className={`p-3 rounded-xl border text-left flex items-center space-x-2 transition ${currentStep === 1
-              ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20 font-bold'
-              : 'bg-slate-50/70 text-slate-600 border-slate-200/80 hover:bg-slate-100'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-sm font-bold'
+              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
               }`}
           >
             <span>1. Identity & Dept</span>
@@ -173,8 +173,8 @@ export const CameraCreatePage: React.FC = () => {
             type="button"
             onClick={() => setCurrentStep(2)}
             className={`p-3 rounded-xl border text-left flex items-center space-x-2 transition ${currentStep === 2
-              ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20 font-bold'
-              : 'bg-slate-50/70 text-slate-600 border-slate-200/80 hover:bg-slate-100'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-sm font-bold'
+              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
               }`}
           >
             <span>2. Location & GIS Map</span>
@@ -184,8 +184,8 @@ export const CameraCreatePage: React.FC = () => {
             type="button"
             onClick={() => setCurrentStep(3)}
             className={`p-3 rounded-xl border text-left flex items-center space-x-2 transition ${currentStep === 3
-              ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20 font-bold'
-              : 'bg-slate-50/70 text-slate-600 border-slate-200/80 hover:bg-slate-100'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-sm font-bold'
+              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
               }`}
           >
             <span>3. Technical Specs</span>
@@ -193,11 +193,11 @@ export const CameraCreatePage: React.FC = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="saasable-card p-6 space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
         {currentStep === 1 && (
           <div className="space-y-5">
-            <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3.5 flex items-center space-x-2 tracking-tight">
-              <Building2 className="w-4 h-4 text-indigo-600" />
+            <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3.5 flex items-center space-x-2 tracking-tight">
+              <Building2 className="w-4 h-4 text-blue-600" />
               <span>Step 1: Asset Identification</span>
             </h3>
 
@@ -207,7 +207,7 @@ export const CameraCreatePage: React.FC = () => {
                 <input
                   type="text"
                   {...register('camera_id')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 font-mono text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 transition font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition font-semibold"
                 />
                 {errors.camera_id && <p className="text-rose-600 text-[10px] mt-1 font-semibold">{errors.camera_id.message}</p>}
               </div>
@@ -218,7 +218,7 @@ export const CameraCreatePage: React.FC = () => {
                   type="text"
                   placeholder="e.g. Income Tax Circle PTZ"
                   {...register('camera_name')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 transition font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition font-semibold"
                 />
                 {errors.camera_name && <p className="text-rose-600 text-[10px] mt-1 font-semibold">{errors.camera_name.message}</p>}
               </div>
@@ -227,7 +227,7 @@ export const CameraCreatePage: React.FC = () => {
                 <label className="block text-slate-700 font-bold mb-1.5 uppercase text-[10px] tracking-wider">DEPARTMENT ASSIGNMENT</label>
                 <select
                   {...register('department_id')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-indigo-500 transition font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-blue-500 transition font-semibold"
                 >
                   {MOCK_DEPARTMENTS.map((d: any) => (
                     <option key={d.id} value={d.id}>{d.name}</option>
@@ -239,7 +239,7 @@ export const CameraCreatePage: React.FC = () => {
                 <label className="block text-slate-700 font-bold mb-1.5 uppercase text-[10px] tracking-wider">CAMERA HARDWARE TYPE</label>
                 <select
                   {...register('camera_type')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-indigo-500 transition font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-blue-500 transition font-semibold"
                 >
                   <option value="PTZ">PTZ (Pan-Tilt-Zoom)</option>
                   <option value="ANPR_SPECIAL">ANPR Special</option>
@@ -255,7 +255,7 @@ export const CameraCreatePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition inline-flex items-center space-x-2 shadow-md shadow-indigo-600/20"
+                className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition inline-flex items-center space-x-2 shadow-sm"
               >
                 <span>Next: GIS Location</span>
                 <ArrowRight className="w-4 h-4" />
@@ -266,8 +266,8 @@ export const CameraCreatePage: React.FC = () => {
 
         {currentStep === 2 && (
           <div className="space-y-5">
-            <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3.5 flex items-center space-x-2 tracking-tight">
-              <MapPin className="w-4 h-4 text-indigo-600" />
+            <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3.5 flex items-center space-x-2 tracking-tight">
+              <MapPin className="w-4 h-4 text-blue-600" />
               <span>Step 2: GIS Location Coordinates</span>
             </h3>
 
@@ -298,7 +298,7 @@ export const CameraCreatePage: React.FC = () => {
                   type="number"
                   step="0.0001"
                   {...register('latitude', { valueAsNumber: true })}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 />
               </div>
 
@@ -308,7 +308,7 @@ export const CameraCreatePage: React.FC = () => {
                   type="number"
                   step="0.0001"
                   {...register('longitude', { valueAsNumber: true })}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 />
               </div>
 
@@ -317,7 +317,7 @@ export const CameraCreatePage: React.FC = () => {
                 <input
                   type="text"
                   {...register('city')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 />
               </div>
             </div>
@@ -328,7 +328,7 @@ export const CameraCreatePage: React.FC = () => {
                 <input
                   type="text"
                   {...register('address')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 />
               </div>
 
@@ -337,7 +337,7 @@ export const CameraCreatePage: React.FC = () => {
                 <input
                   type="text"
                   {...register('ward')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 />
               </div>
 
@@ -346,7 +346,7 @@ export const CameraCreatePage: React.FC = () => {
                 <input
                   type="text"
                   {...register('pin_code')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 />
               </div>
             </div>
@@ -363,7 +363,7 @@ export const CameraCreatePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCurrentStep(3)}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition inline-flex items-center space-x-2 shadow-md shadow-indigo-600/20"
+                className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition inline-flex items-center space-x-2 shadow-sm"
               >
                 <span>Next: Technical Specs</span>
                 <ArrowRight className="w-4 h-4" />
@@ -374,8 +374,8 @@ export const CameraCreatePage: React.FC = () => {
 
         {currentStep === 3 && (
           <div className="space-y-5">
-            <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3.5 flex items-center space-x-2 tracking-tight">
-              <Server className="w-4 h-4 text-indigo-600" />
+            <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3.5 flex items-center space-x-2 tracking-tight">
+              <Server className="w-4 h-4 text-blue-600" />
               <span>Step 3: Network & RTSP Integration</span>
             </h3>
 
@@ -386,7 +386,7 @@ export const CameraCreatePage: React.FC = () => {
                   type="text"
                   placeholder="10.120.10.15"
                   {...register('ip_address')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 />
               </div>
 
@@ -394,7 +394,7 @@ export const CameraCreatePage: React.FC = () => {
                 <label className="block text-slate-700 font-bold mb-1.5 uppercase text-[10px] tracking-wider">RESOLUTION</label>
                 <select
                   {...register('resolution')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                  className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
                 >
                   <option value="4K">4K (3840x2160)</option>
                   <option value="1080P">1080P Full HD</option>
@@ -405,13 +405,13 @@ export const CameraCreatePage: React.FC = () => {
 
             <div>
               <label className="block text-slate-700 font-bold text-xs mb-1.5 flex items-center space-x-1.5 uppercase text-[10px] tracking-wider">
-                <Radio className="w-3.5 h-3.5 text-indigo-600" />
+                <Radio className="w-3.5 h-3.5 text-blue-600" />
                 <span>RTSP STREAM URL TEMPLATE</span>
               </label>
               <input
                 type="text"
                 {...register('rtsp_url')}
-                className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 font-mono text-xs border border-slate-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none font-semibold"
+                className="w-full px-3.5 py-2.5 bg-slate-50/50 text-slate-900 font-mono text-xs border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 outline-none font-semibold"
               />
             </div>
 
@@ -426,7 +426,7 @@ export const CameraCreatePage: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition flex items-center space-x-2 shadow-md shadow-emerald-600/20"
+                className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center space-x-2 shadow-sm"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Complete Registration</span>
@@ -438,4 +438,3 @@ export const CameraCreatePage: React.FC = () => {
     </div>
   );
 };
-;

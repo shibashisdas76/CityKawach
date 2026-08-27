@@ -8,43 +8,43 @@ export default {
     extend: {
       colors: {
         saasable: {
-          50: "#EEF2FF",
-          100: "#E0E7FF",
-          200: "#C7D2FE",
-          300: "#A5B4FC",
-          400: "#818CF8",
-          500: "#6366F1",
-          600: "#4F46E5",
-          700: "#4338CA",
-          800: "#3730A3",
-          900: "#312E81",
+          50: "#EFF6FF",
+          100: "#DBEAFE",
+          200: "#BFDBFE",
+          300: "#93C5FD",
+          400: "#60A5FA",
+          500: "#3B82F6",
+          600: "#2563EB",
+          700: "#1D4ED8",
+          800: "#1E40AF",
+          900: "#1E3A8A",
         },
         surface: {
-          bg: "#F8FAFC",
+          bg: "#F8FBFF",
           card: "#FFFFFF",
-          sidebar: "#0F172A",
-          sidebarMuted: "#1E293B",
-          sidebarBorder: "#334155",
+          sidebar: "#FFFFFF",
+          sidebarMuted: "#F1F5F9",
+          sidebarBorder: "#E2E8F0",
           border: "#E2E8F0",
-          hover: "#F1F5F9"
+          hover: "#F8FAFC"
         },
         command: {
           dark: "#0F172A",
-          surface: "#1E293B",
-          panel: "#1E293B",
-          border: "#334155",
-          accent: "#38BDF8",
+          surface: "#FFFFFF",
+          panel: "#FFFFFF",
+          border: "#E2E8F0",
+          accent: "#2563EB",
           gold: "#F59E0B",
           emerald: "#10B981",
-          rose: "#F43F5E",
-          text: "#F8FAFC",
-          muted: "#94A3B8"
+          rose: "#EF4444",
+          text: "#0F172A",
+          muted: "#64748B"
         }
       },
       boxShadow: {
-        'saasable': '0 2px 12px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04)',
-        'saasable-hover': '0 10px 25px -5px rgba(79, 70, 229, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.04)',
-        'card-glow': '0 0 20px -5px rgba(99, 102, 241, 0.15)',
+        'saasable': '0 2px 12px -2px rgba(15, 23, 42, 0.04), 0 1px 3px 0 rgba(15, 23, 42, 0.02)',
+        'saasable-hover': '0 12px 28px -4px rgba(37, 99, 235, 0.1), 0 4px 8px -2px rgba(15, 23, 42, 0.03)',
+        'card-glow': '0 0 20px -5px rgba(37, 99, 235, 0.12)',
       },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],

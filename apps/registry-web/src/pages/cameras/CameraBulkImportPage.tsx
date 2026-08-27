@@ -141,7 +141,7 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
       <div className="flex items-center justify-between">
         <Link
           to="/cameras"
-          className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition"
+          className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-500 hover:text-blue-600 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Camera Registry</span>
@@ -150,14 +150,14 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
           onClick={downloadSampleTemplate}
           className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center space-x-2 shadow-sm transition"
         >
-          <Download className="w-3.5 h-3.5 text-indigo-600" />
+          <Download className="w-3.5 h-3.5 text-blue-600" />
           <span>Download Sample CSV</span>
         </button>
       </div>
 
-      <div className="saasable-card p-6 space-y-2">
-        <h2 className="text-xl font-extrabold text-slate-900 flex items-center space-x-2.5 tracking-tight">
-          <UploadCloud className="w-6 h-6 text-indigo-600" />
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+        <h2 className="text-xl font-bold text-slate-900 flex items-center space-x-2.5 tracking-tight">
+          <UploadCloud className="w-6 h-6 text-blue-600" />
           <span>Bulk CSV Camera Asset Ingestion</span>
         </h2>
         <p className="text-xs text-slate-500 font-medium">
@@ -165,12 +165,12 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
         </p>
       </div>
 
-      <div className="bg-white border-2 border-dashed border-slate-300 hover:border-indigo-500 transition-all p-10 rounded-2xl text-center space-y-4 shadow-saasable">
-        <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 mx-auto flex items-center justify-center text-indigo-600 shadow-sm">
+      <div className="bg-white border-2 border-dashed border-slate-300 hover:border-blue-500 transition-all p-10 rounded-2xl text-center space-y-4 shadow-sm">
+        <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 mx-auto flex items-center justify-center text-blue-600 shadow-sm">
           <FileSpreadsheet className="w-7 h-7" />
         </div>
         <div>
-          <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Upload CCTV Metadata CSV File</h3>
+          <h3 className="text-base font-bold text-slate-900 tracking-tight">Upload CCTV Metadata CSV File</h3>
           <p className="text-xs text-slate-500 mt-1 font-medium">Select a `.csv` file from your workstation to parse camera records</p>
         </div>
 
@@ -188,23 +188,23 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
 
         <label
           htmlFor="csv-file-input"
-          className="inline-block px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs cursor-pointer hover:bg-indigo-700 transition shadow-md shadow-indigo-600/20"
+          className="inline-block px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs cursor-pointer hover:bg-blue-700 transition shadow-sm"
         >
           Select CSV File
         </label>
 
         {fileName && (
-          <div className="text-xs font-mono text-indigo-600 pt-2 font-bold">
+          <div className="text-xs font-mono text-blue-600 pt-2 font-bold">
             Selected: {fileName}
           </div>
         )}
       </div>
 
       {parsedRows.length > 0 && (
-        <div className="saasable-card p-6 space-y-4">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
           <div className="flex justify-between items-center border-b border-slate-100 pb-4">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">CSV Parsing Results</h3>
+              <h3 className="text-sm font-bold text-slate-900 tracking-tight">CSV Parsing Results</h3>
               <div className="text-xs font-mono mt-1 space-x-4">
                 <span className="text-emerald-600 font-bold inline-flex items-center gap-1">
                   <Check className="w-4 h-4" />
@@ -220,7 +220,7 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
             <button
               onClick={executeImport}
               disabled={validCount === 0}
-              className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs hover:bg-emerald-700 disabled:opacity-40 transition shadow-md shadow-emerald-600/20 flex items-center space-x-2"
+              className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 disabled:opacity-40 transition shadow-sm flex items-center space-x-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>Import {validCount} Records</span>
@@ -230,7 +230,7 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono border-collapse">
               <thead>
-                <tr className="bg-slate-50/80 text-slate-500 uppercase text-[10px] border-b border-slate-200/80 font-extrabold">
+                <tr className="bg-slate-50/80 text-slate-500 uppercase text-[10px] border-b border-slate-200/80 font-bold">
                   <th className="py-3 px-3">Line #</th>
                   <th className="py-3 px-3">Camera ID</th>
                   <th className="py-3 px-3">Name</th>
@@ -243,16 +243,16 @@ GJ-SRT-MNC-103,Adajan Main Circle,FIXED_BULLET,DEPT-SRT-PORT,21.1980,72.7950,10.
                 {parsedRows.map((r) => (
                   <tr key={r.rowIndex} className={r.isValid ? 'hover:bg-slate-50/50' : 'bg-rose-50/50'}>
                     <td className="py-3 px-3 font-bold text-slate-500">Line {r.rowIndex}</td>
-                    <td className="py-3 px-3 text-indigo-600 font-bold">{r.data.camera_id || 'N/A'}</td>
+                    <td className="py-3 px-3 text-blue-600 font-bold">{r.data.camera_id || 'N/A'}</td>
                     <td className="py-3 px-3 text-slate-900 font-medium">{r.data.camera_name || 'N/A'}</td>
                     <td className="py-3 px-3 text-slate-600">{r.data.departmentCode || 'N/A'}</td>
                     <td className="py-3 px-3">
                       {r.isValid ? (
-                        <span className="px-2.5 py-0.5 rounded-md text-[10px] bg-emerald-100/80 text-emerald-800 font-extrabold">
+                        <span className="px-2.5 py-0.5 rounded-md text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
                           VALID
                         </span>
                       ) : (
-                        <span className="px-2.5 py-0.5 rounded-md text-[10px] bg-rose-100/80 text-rose-800 font-extrabold">
+                        <span className="px-2.5 py-0.5 rounded-md text-[10px] bg-rose-50 text-rose-700 border border-rose-200 font-bold">
                           INVALID
                         </span>
                       )}

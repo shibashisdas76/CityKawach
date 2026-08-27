@@ -44,9 +44,9 @@ export const CameraListPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Action Bar Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-saasable flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">State CCTV Camera Registry</h2>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Camera Registry</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Authoritative database of registered surveillance assets (<span className="font-semibold text-slate-700">{filtered.length}</span> of {cameras.length} items)
           </p>
@@ -54,14 +54,14 @@ export const CameraListPage: React.FC = () => {
         <div className="flex items-center space-x-2.5">
           <Link
             to="/cameras/import"
-            className="inline-flex items-center space-x-2 bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm"
+            className="inline-flex items-center space-x-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm"
           >
-            <Upload className="w-3.5 h-3.5" />
+            <Upload className="w-3.5 h-3.5 text-slate-500" />
             <span>Bulk CSV Import</span>
           </Link>
           <Link
             to="/cameras/new"
-            className="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4.5 py-2.5 rounded-xl shadow-md shadow-indigo-600/20 transition"
+            className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4.5 py-2.5 rounded-xl shadow-sm transition"
           >
             <Plus className="w-4 h-4" />
             <span>Register New Camera</span>
@@ -70,13 +70,13 @@ export const CameraListPage: React.FC = () => {
       </div>
 
       {/* Filter Header Toolbar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saasable flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
             placeholder="Search by Camera ID, Junction, Ward, or District..."
-            className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 outline-none transition"
+            className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-xs bg-slate-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 outline-none transition"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -85,7 +85,7 @@ export const CameraListPage: React.FC = () => {
         <div className="flex items-center space-x-2.5 w-full md:w-auto">
           <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <select
-            className="text-xs border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-indigo-500 outline-none transition"
+            className="text-xs border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-blue-500 outline-none transition"
             value={deptFilter}
             onChange={(e) => setDeptFilter(e.target.value)}
           >
@@ -98,7 +98,7 @@ export const CameraListPage: React.FC = () => {
           </select>
 
           <select
-            className="text-xs border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-indigo-500 outline-none transition"
+            className="text-xs border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50/50 font-semibold text-slate-700 focus:bg-white focus:border-blue-500 outline-none transition"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -110,11 +110,11 @@ export const CameraListPage: React.FC = () => {
         </div>
       </div>
 
-      {/* SaasAble Camera Data Table */}
-      <div className="saasable-card overflow-hidden">
+      {/* Modern SaaS Camera Data Table */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-extrabold uppercase tracking-wider text-[10px]">
+            <thead className="bg-slate-50/80 border-b border-slate-200/80 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="px-5 py-3.5">Camera ID</th>
                 <th className="px-5 py-3.5">Asset Name</th>
@@ -135,8 +135,8 @@ export const CameraListPage: React.FC = () => {
                 </tr>
               ) : (
                 filtered.map((cam) => (
-                  <tr key={cam.id} className="hover:bg-indigo-50/30 transition-colors">
-                    <td className="px-5 py-3.5 font-mono font-bold text-indigo-600">
+                  <tr key={cam.id} className="hover:bg-blue-50/20 transition-colors">
+                    <td className="px-5 py-3.5 font-mono font-bold text-blue-600">
                       <Link to={`/cameras/${cam.id}`} className="hover:underline">
                         {cam.camera_id}
                       </Link>
@@ -150,7 +150,7 @@ export const CameraListPage: React.FC = () => {
                     <td className="px-5 py-3.5">
                       <div className="flex flex-wrap gap-1.5">
                         {(cam.ai_capabilities || ['ANPR']).map((ai) => (
-                          <span key={ai} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md text-[10px] font-mono font-bold border border-indigo-100">
+                          <span key={ai} className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md text-[10px] font-mono font-semibold border border-blue-100">
                             {ai}
                           </span>
                         ))}
@@ -162,7 +162,7 @@ export const CameraListPage: React.FC = () => {
                     <td className="px-5 py-3.5 text-right space-x-1">
                       <Link
                         to={`/cameras/${cam.id}`}
-                        className="inline-flex p-1.5 text-slate-500 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition"
+                        className="inline-flex p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />

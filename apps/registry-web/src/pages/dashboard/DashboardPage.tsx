@@ -42,15 +42,15 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-saasable flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      {/* Dashboard Header Banner */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-semibold text-indigo-600 uppercase tracking-wider font-mono">
-            <Activity className="w-4 h-4 text-indigo-600" />
+          <div className="flex items-center space-x-2 text-xs font-semibold text-blue-600 uppercase tracking-wider font-mono">
+            <Activity className="w-4 h-4 text-blue-600" />
             <span>State Operations Dashboard</span>
           </div>
-          <h2 className="text-xl font-extrabold text-slate-900 mt-1 tracking-tight">CCTV Infrastructure & Coverage Intelligence</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Real-time surveillance metadata consolidation across state entities</p>
+          <h2 className="text-xl font-bold text-slate-900 mt-1 tracking-tight">Dashboard Overview</h2>
+          <p className="text-xs text-slate-500 mt-0.5">Welcome back! Here's what's happening today across your surveillance grid.</p>
         </div>
         <div className="flex items-center space-x-2 bg-emerald-50 border border-emerald-200/80 px-3.5 py-1.5 rounded-full text-xs font-semibold text-emerald-700 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
@@ -58,14 +58,14 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* SaasAble KPI Widgets */}
+      {/* Modern SaaS KPI Widgets */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
         {/* Total Assets */}
-        <div className="saasable-card p-5 flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Assets</span>
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-              <Video className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
+              <Video className="w-4.5 h-4.5" />
             </div>
           </div>
           <div className="mt-4">
@@ -77,11 +77,11 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Operational */}
-        <div className="saasable-card p-5 flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Operational</span>
             <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4.5 h-4.5" />
             </div>
           </div>
           <div className="mt-4">
@@ -94,11 +94,11 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Critical Offline */}
-        <div className="saasable-card p-5 flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Critical Offline</span>
             <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
-              <XCircle className="w-4 h-4" />
+              <XCircle className="w-4.5 h-4.5" />
             </div>
           </div>
           <div className="mt-4">
@@ -108,29 +108,29 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Maintenance */}
-        <div className="saasable-card p-5 flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">In Maintenance</span>
             <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
-              <AlertTriangle className="w-4 h-4" />
+              <AlertTriangle className="w-4.5 h-4.5" />
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-3xl font-extrabold text-amber-500 tracking-tight">{maintenanceCount}</p>
-            <p className="text-xs font-medium text-slate-500 mt-1">Scheduled Hardware Service</p>
+            <p className="text-3xl font-extrabold text-amber-600 tracking-tight">{maintenanceCount}</p>
+            <p className="text-xs font-medium text-slate-500 mt-1">Scheduled Service</p>
           </div>
         </div>
 
         {/* VDI Gaps */}
-        <div className="saasable-card p-5 flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">VDI Coverage Deficit</span>
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-              <Layers className="w-4 h-4" />
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">VDI Deficit</span>
+            <div className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600">
+              <Layers className="w-4.5 h-4.5" />
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-3xl font-extrabold text-indigo-600 tracking-tight">{criticalGapsCount}</p>
+            <p className="text-3xl font-extrabold text-purple-600 tracking-tight">{criticalGapsCount}</p>
             <p className="text-xs font-semibold text-rose-500 mt-1">Priority Surveillance Zones</p>
           </div>
         </div>
@@ -138,34 +138,34 @@ export const DashboardPage: React.FC = () => {
 
       {/* Analytics Charts Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="saasable-card p-6">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
           <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">Department Asset Distribution</h3>
+              <h3 className="text-sm font-bold text-slate-900 tracking-tight">Department Asset Distribution</h3>
               <p className="text-xs text-slate-500">Camera volume deployed per state government entity</p>
             </div>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={departmentData}>
-                <XAxis dataKey="dept" fontSize={11} stroke="#64748B" tick={{ fill: '#475569', fontWeight: 600 }} />
-                <YAxis fontSize={11} stroke="#64748B" tick={{ fill: '#475569', fontWeight: 600 }} />
+                <XAxis dataKey="dept" fontSize={11} stroke="#94A3B8" tick={{ fill: '#64748B', fontWeight: 600 }} />
+                <YAxis fontSize={11} stroke="#94A3B8" tick={{ fill: '#64748B', fontWeight: 600 }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0F172A', borderRadius: '12px', border: '1px solid #334155', color: '#F8FAFC', fontSize: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)' }}
-                  itemStyle={{ color: '#A5B4FC', fontWeight: 'bold' }}
-                  labelStyle={{ color: '#F8FAFC', fontWeight: 'bold' }}
+                  contentStyle={{ backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0', color: '#0F172A', fontSize: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.08)' }}
+                  itemStyle={{ color: '#2563EB', fontWeight: 'bold' }}
+                  labelStyle={{ color: '#0F172A', fontWeight: 'bold' }}
                   formatter={(value: any) => [`${value} Cameras`, 'Deployed']}
                 />
-                <Bar dataKey="cameras" fill="#4F46E5" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="cameras" fill="#2563EB" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="saasable-card p-6">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
           <div className="flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
             <div>
-              <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">Camera Health & Operational Status</h3>
+              <h3 className="text-sm font-bold text-slate-900 tracking-tight">Camera Health & Operational Status</h3>
               <p className="text-xs text-slate-500">Ratio breakdown of online, offline, and maintenance streams</p>
             </div>
           </div>
@@ -182,16 +182,16 @@ export const DashboardPage: React.FC = () => {
                   innerRadius={45}
                   paddingAngle={4}
                   label={({ name, count }) => `${name}: ${count}`}
-                  labelLine={{ stroke: '#64748B', strokeWidth: 1.5 }}
+                  labelLine={{ stroke: '#94A3B8', strokeWidth: 1.5 }}
                 >
                   {statusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0F172A', borderRadius: '12px', border: '1px solid #334155', color: '#F8FAFC', fontSize: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)' }}
-                  itemStyle={{ color: '#F8FAFC', fontWeight: 'bold' }}
-                  labelStyle={{ color: '#F8FAFC', fontWeight: 'bold' }}
+                  contentStyle={{ backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0', color: '#0F172A', fontSize: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.08)' }}
+                  itemStyle={{ color: '#0F172A', fontWeight: 'bold' }}
+                  labelStyle={{ color: '#0F172A', fontWeight: 'bold' }}
                   formatter={(value: any, name: any) => [`${value} Cameras`, `${name} Status`]}
                 />
               </PieChart>

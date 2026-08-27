@@ -82,15 +82,15 @@ export const SurveillanceAlertTab: React.FC = () => {
     };
 
     return (
-        <div className="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 min-h-[480px] shadow-2xl space-y-6">
+        <div className="bg-white text-slate-900 p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800/80 pb-5">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
                 <div>
-                    <h2 className="text-lg font-extrabold flex items-center text-rose-400 tracking-tight">
+                    <h2 className="text-lg font-bold flex items-center text-rose-600 tracking-tight">
                         <AlertOctagon className="w-5 h-5 mr-2 animate-pulse text-rose-500" />
                         AI Computer Vision Real-Time Detection Feed
                     </h2>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-500 mt-0.5">
                         Live streaming events ingested from edge AI/ML analytics pipeline
                     </p>
                 </div>
@@ -98,50 +98,50 @@ export const SurveillanceAlertTab: React.FC = () => {
                 <div className="flex items-center space-x-3">
                     <button
                         onClick={handleEnableAudio}
-                        className={`flex items-center px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${audioEnabled
-                                ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/40'
-                                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20'
+                        className={`flex items-center px-4 py-2 rounded-xl text-xs font-semibold transition shadow-sm ${audioEnabled
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20'
                             }`}
                     >
-                        {audioEnabled ? <Volume2 className="w-3.5 h-3.5 mr-2" /> : <VolumeX className="w-3.5 h-3.5 mr-2" />}
+                        {audioEnabled ? <Volume2 className="w-3.5 h-3.5 mr-2 text-emerald-600" /> : <VolumeX className="w-3.5 h-3.5 mr-2" />}
                         {audioEnabled ? 'Voice Alerts Active' : 'Enable Voice Alerts'}
                     </button>
                 </div>
             </div>
 
             {/* AI Simulator Action Bar */}
-            <div className="p-4 rounded-xl bg-slate-950/90 border border-slate-800/80 space-y-2.5">
-                <div className="flex items-center space-x-2 text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">
-                    <Cpu className="w-4 h-4 text-indigo-500" />
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                <div className="flex items-center space-x-2 text-xs font-mono text-blue-600 font-bold uppercase tracking-wider">
+                    <Cpu className="w-4 h-4 text-blue-600" />
                     <span>Pipeline Tester: Simulate Computer Vision Event</span>
                 </div>
                 <div className="flex flex-wrap gap-2.5 pt-1">
                     <button
                         onClick={() => handleSimulateAiEvent('ANPR_WATCHLIST_MATCH')}
-                        className="px-3.5 py-1.5 rounded-lg bg-indigo-950/70 hover:bg-indigo-900/80 text-indigo-300 text-xs font-mono font-semibold border border-indigo-700/50 flex items-center space-x-1.5 transition"
+                        className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-indigo-700 text-xs font-mono font-semibold border border-indigo-200 shadow-sm flex items-center space-x-1.5 transition"
                     >
-                        <Zap className="w-3.5 h-3.5 text-indigo-400" />
+                        <Zap className="w-3.5 h-3.5 text-indigo-600" />
                         <span>ANPR Plate Match</span>
                     </button>
                     <button
                         onClick={() => handleSimulateAiEvent('CROWD_SURGE_DETECTED')}
-                        className="px-3.5 py-1.5 rounded-lg bg-amber-950/70 hover:bg-amber-900/80 text-amber-300 text-xs font-mono font-semibold border border-amber-700/50 flex items-center space-x-1.5 transition"
+                        className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-amber-700 text-xs font-mono font-semibold border border-amber-200 shadow-sm flex items-center space-x-1.5 transition"
                     >
-                        <Zap className="w-3.5 h-3.5 text-amber-400" />
+                        <Zap className="w-3.5 h-3.5 text-amber-600" />
                         <span>Crowd Density Surge</span>
                     </button>
                     <button
                         onClick={() => handleSimulateAiEvent('UNAUTHORIZED_INTRUSION')}
-                        className="px-3.5 py-1.5 rounded-lg bg-blue-950/70 hover:bg-blue-900/80 text-blue-300 text-xs font-mono font-semibold border border-blue-700/50 flex items-center space-x-1.5 transition"
+                        className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-blue-700 text-xs font-mono font-semibold border border-blue-200 shadow-sm flex items-center space-x-1.5 transition"
                     >
-                        <Zap className="w-3.5 h-3.5 text-blue-400" />
+                        <Zap className="w-3.5 h-3.5 text-blue-600" />
                         <span>Intrusion Tripwire</span>
                     </button>
                     <button
                         onClick={() => handleSimulateAiEvent('FIRE_SMOKE_HAZARD')}
-                        className="px-3.5 py-1.5 rounded-lg bg-rose-950/70 hover:bg-rose-900/80 text-rose-300 text-xs font-mono font-semibold border border-rose-700/50 flex items-center space-x-1.5 transition"
+                        className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-rose-700 text-xs font-mono font-semibold border border-rose-200 shadow-sm flex items-center space-x-1.5 transition"
                     >
-                        <Zap className="w-3.5 h-3.5 text-rose-400" />
+                        <Zap className="w-3.5 h-3.5 text-rose-600" />
                         <span>Thermal Fire Anomaly</span>
                     </button>
                 </div>
@@ -150,39 +150,39 @@ export const SurveillanceAlertTab: React.FC = () => {
             {/* Alert Cards Container */}
             <div className="space-y-3">
                 {alerts.length === 0 ? (
-                    <div className="text-center py-12 text-slate-500 bg-slate-950/40 rounded-xl border border-slate-800/60">
-                        <CheckCircle className="w-10 h-10 mx-auto mb-2 opacity-40 text-emerald-400" />
-                        <p className="text-xs font-semibold text-slate-400">No critical events detected. All surveillance sectors operational.</p>
+                    <div className="text-center py-12 text-slate-500 bg-slate-50/50 rounded-xl border border-slate-200/60">
+                        <CheckCircle className="w-10 h-10 mx-auto mb-2 text-emerald-500" />
+                        <p className="text-xs font-semibold text-slate-600">No critical events detected. All surveillance sectors operational.</p>
                     </div>
                 ) : (
                     alerts.map((alert) => (
                         <div
                             key={alert.id}
-                            className={`p-4 rounded-xl border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition shadow-lg ${alert.severity === 'CRITICAL'
-                                    ? 'bg-rose-950/30 border-rose-800/60 text-slate-100'
-                                    : 'bg-amber-950/20 border-amber-800/50 text-slate-100'
+                            className={`p-4 rounded-xl border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition shadow-sm ${alert.severity === 'CRITICAL'
+                                    ? 'bg-rose-50/50 border-rose-200 text-slate-900'
+                                    : 'bg-amber-50/50 border-amber-200 text-slate-900'
                                 }`}
                         >
                             <div className="space-y-1.5">
                                 <div className="flex items-center space-x-2.5">
                                     <span
                                         className={`px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider ${alert.severity === 'CRITICAL'
-                                                ? 'bg-rose-600 text-white shadow-sm shadow-rose-600/30'
-                                                : 'bg-amber-600 text-white'
+                                                ? 'bg-rose-600 text-white'
+                                                : 'bg-amber-500 text-white'
                                             }`}
                                     >
                                         {alert.alert_type.replace(/_/g, ' ')}
                                     </span>
-                                    <span className="text-[10px] font-mono text-slate-400">
+                                    <span className="text-[10px] font-mono text-slate-500">
                                         {new Date(alert.timestamp).toLocaleTimeString()}
                                     </span>
                                 </div>
 
-                                <p className="text-sm font-extrabold text-white tracking-tight">{alert.camera_name}</p>
-                                <p className="text-xs font-mono text-slate-300 flex items-center space-x-2">
+                                <p className="text-sm font-bold text-slate-900 tracking-tight">{alert.camera_name}</p>
+                                <p className="text-xs font-mono text-slate-600 flex items-center space-x-2">
                                     <span>ID: {alert.camera_id}</span>
                                     {alert.bounding_box_details && (
-                                        <span className="text-emerald-400 font-semibold">• {alert.bounding_box_details}</span>
+                                        <span className="text-emerald-600 font-semibold">• {alert.bounding_box_details}</span>
                                     )}
                                 </p>
                             </div>
@@ -190,15 +190,15 @@ export const SurveillanceAlertTab: React.FC = () => {
                             <div className="flex items-center space-x-2.5 self-end sm:self-auto">
                                 <Link
                                     to={`/cameras/${alert.camera_id}`}
-                                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 transition"
+                                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-50 text-blue-600 border border-slate-200 shadow-sm transition"
                                 >
                                     Inspect Stream
                                 </Link>
                                 <button
                                     onClick={() => markResolved(alert.id)}
-                                    className="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-emerald-600/50 transition flex items-center space-x-1.5 shadow-sm"
+                                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 shadow-sm"
                                 >
-                                    <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                                    <CheckCircle className="w-3.5 h-3.5 text-white" />
                                     <span>Acknowledge</span>
                                 </button>
                             </div>

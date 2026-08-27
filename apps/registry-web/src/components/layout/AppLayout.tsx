@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -13,34 +13,31 @@ import {
   Upload,
   UserCheck,
   Shield,
-  LogOut
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '@shared/types/cctv-metadata.contract';
 import { supabase } from '../../services/supabaseClient';
 
-const mainNavigation = [
+const allNavigationItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Camera Registry', href: '/cameras', icon: Video },
   { name: 'Add Camera', href: '/cameras/new', icon: PlusCircle },
   { name: 'Bulk Import', href: '/cameras/import', icon: Upload },
-];
-
-const intelligenceNavigation = [
-  { name: 'GIS Command Map', href: '/map', icon: MapPin },
+  { name: 'GIS Map', href: '/map', icon: MapPin },
   { name: 'Health Telemetry', href: '/health', icon: Activity },
   { name: 'Gap Intelligence', href: '/gap-analysis', icon: Layers },
-];
-
-const managementNavigation = [
   { name: 'Departments', href: '/departments', icon: Building2 },
-  { name: 'Reports & Export', href: '/reports', icon: FileSpreadsheet },
-  { name: 'Audit Trail', href: '/audit-logs', icon: ShieldCheck },
+  { name: 'Reports', href: '/reports', icon: FileSpreadsheet },
+  { name: 'Audit Logs', href: '/audit-logs', icon: ShieldCheck },
 ];
 
 export const AppLayout: React.FC = () => {
   const { currentUser, setRole } = useAuth();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -53,166 +50,159 @@ export const AppLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50 font-sans antialiased text-slate-900 selection:bg-indigo-500 selection:text-white">
-      {/* SaasAble Admin Sidebar */}
-      <aside className="w-64 bg-slate-950 text-slate-300 flex flex-col border-r border-slate-800/80 shrink-0 select-none shadow-2xl z-20">
-        {/* Brand Header */}
-        <div className="p-5 border-b border-slate-800/80 flex items-center space-x-3.5 bg-slate-950">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-indigo-400 flex items-center justify-center font-extrabold text-white shadow-lg shadow-indigo-600/35 text-base border border-indigo-400/30">
-            G
-          </div>
-          <div>
-            <h1 className="text-xs font-extrabold tracking-wider text-white uppercase font-sans">STATE CCTV REGISTRY</h1>
-            <p className="text-[10px] text-indigo-400 font-mono tracking-tight font-bold">SAASABLE COMMAND v1.0</p>
-          </div>
-        </div>
-
-        {/* Navigation Sections */}
-        <nav className="flex-1 p-3.5 space-y-6 overflow-y-auto">
-          {/* Main Group */}
-          <div>
-            <div className="px-3 pb-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest font-mono">
-              Core Registry
-            </div>
-            <div className="space-y-1">
-              {mainNavigation.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${isActive
-                      ? 'bg-indigo-600 text-white font-extrabold shadow-md shadow-indigo-600/30 scale-[1.01]'
-                      : 'text-slate-400 hover:bg-slate-900 hover:text-slate-100'
-                    }`
-                  }
-                >
-                  <item.icon className="w-4 h-4 shrink-0" />
-                  <span>{item.name}</span>
-                </NavLink>
-              ))}
-            </div>
-          </div>
-
-          {/* Intelligence Group */}
-          <div>
-            <div className="px-3 pb-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest font-mono">
-              GIS & Telemetry
-            </div>
-            <div className="space-y-1">
-              {intelligenceNavigation.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${isActive
-                      ? 'bg-indigo-600 text-white font-extrabold shadow-md shadow-indigo-600/30 scale-[1.01]'
-                      : 'text-slate-400 hover:bg-slate-900 hover:text-slate-100'
-                    }`
-                  }
-                >
-                  <item.icon className="w-4 h-4 shrink-0" />
-                  <span>{item.name}</span>
-                </NavLink>
-              ))}
-            </div>
-          </div>
-
-          {/* Governance Group */}
-          <div>
-            <div className="px-3 pb-2.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest font-mono">
-              Governance
-            </div>
-            <div className="space-y-1">
-              {managementNavigation.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={({ isActive }) =>
-                    `flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${isActive
-                      ? 'bg-indigo-600 text-white font-extrabold shadow-md shadow-indigo-600/30 scale-[1.01]'
-                      : 'text-slate-400 hover:bg-slate-900 hover:text-slate-100'
-                    }`
-                  }
-                >
-                  <item.icon className="w-4 h-4 shrink-0" />
-                  <span>{item.name}</span>
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        </nav>
-
-        {/* Sidebar Footer Node Badge */}
-        <div className="p-4 border-t border-slate-800/80 bg-slate-950">
-          <div className="flex items-center space-x-3">
-            <div className="relative flex items-center justify-center">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <div className="absolute w-4 h-4 rounded-full bg-emerald-500/30 animate-ping" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-extrabold text-slate-200 truncate">State Grid Connected</p>
-              <p className="text-[10px] text-indigo-400 font-mono truncate font-semibold">Ahmedabad Regional Grid</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content Container with Attractive Ambient Mesh Background */}
-      <div className="flex-1 flex flex-col min-w-0 bg-slate-50/80 bg-grid-pattern relative">
-        {/* SaasAble Top Navbar Header */}
-        <header className="h-16 backdrop-blur-md bg-white/90 border-b border-slate-200/80 px-6 flex items-center justify-between shadow-sm sticky top-0 z-10">
-          <div className="flex items-center space-x-3 text-xs font-semibold text-slate-600">
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
-              <Shield className="w-4.5 h-4.5" />
-            </div>
-            <span className="font-extrabold text-slate-800 tracking-tight">Gujarat Integrated Public Safety Infrastructure Portal</span>
-          </div>
-
-          <div className="flex items-center space-x-3.5">
-            {/* Active Role Selector Badge */}
-            <div className="flex items-center space-x-2 bg-slate-100/90 hover:bg-slate-200/70 px-3.5 py-1.5 rounded-xl border border-slate-200 transition">
-              <UserCheck className="w-4 h-4 text-indigo-600" />
-              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider font-mono">Role:</label>
-              <select
-                value={currentUser.role}
-                onChange={(e) => setRole(e.target.value as UserRole)}
-                className="text-xs font-mono font-bold bg-transparent text-indigo-700 focus:outline-none cursor-pointer"
-              >
-                <option value="SUPER_ADMIN">SUPER_ADMIN</option>
-                <option value="STATE_ADMIN">STATE_ADMIN</option>
-                <option value="DEPARTMENT_ADMIN">DEPARTMENT_ADMIN</option>
-                <option value="OPERATOR">OPERATOR</option>
-                <option value="VIEWER">VIEWER</option>
-              </select>
-            </div>
-
-            {/* User Profile Pill */}
-            <div className="flex items-center space-x-2.5 bg-slate-900 text-white px-3.5 py-1.5 rounded-xl shadow-md border border-slate-800 text-xs font-semibold">
-              <div className="w-5.5 h-5.5 rounded-full bg-indigo-500 text-white font-extrabold text-[11px] flex items-center justify-center shadow-sm">
-                {currentUser.fullName.charAt(0)}
+    <div className="min-h-screen flex flex-col bg-[#F8FBFF] font-sans antialiased text-slate-900 selection:bg-blue-600 selection:text-white">
+      {/* Top Navbar Header */}
+      <header className="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 border-b border-blue-800/80 shadow-lg sticky top-0 z-40 text-white">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            
+            {/* Left: Brand Logo & Title */}
+            <div className="flex items-center space-x-3 shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center font-extrabold text-white shadow-md shadow-cyan-500/20 text-base">
+                G
               </div>
-              <span className="truncate max-w-[160px] font-extrabold">{currentUser.fullName}</span>
-              <span className="text-[10px] font-mono text-indigo-300 font-bold">({currentUser.badgeNumber})</span>
+              <div className="hidden sm:block">
+                <h1 className="text-sm font-extrabold tracking-tight text-white uppercase">STATE CCTV REGISTRY</h1>
+                <p className="text-[10px] text-cyan-400 font-mono tracking-tight font-bold">SAASABLE COMMAND v1.0</p>
+              </div>
             </div>
 
-            {/* Logout Button */}
-            <div className="h-6 w-px bg-slate-200 mx-0.5" />
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded-xl transition-all font-semibold border border-transparent hover:border-rose-200"
-              title="Secure Logout"
-            >
-              <LogOut className="w-4 h-4 text-rose-500" />
-              <span className="text-xs font-extrabold hidden sm:inline">Logout</span>
-            </button>
-          </div>
-        </header>
+            {/* Center: Desktop Navigation Bar */}
+            <nav className="hidden xl:flex items-center space-x-1 overflow-x-auto py-2">
+              {allNavigationItems.map((item) => (
+                <NavLink
+                  key={item.name}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap ${
+                      isActive
+                        ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/25 border border-blue-400/40'
+                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                    }`
+                  }
+                >
+                  <item.icon className="w-4 h-4 shrink-0" />
+                  <span>{item.name}</span>
+                </NavLink>
+              ))}
+            </nav>
 
-        {/* Page Content Outlet */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          <Outlet />
-        </main>
-      </div>
+            {/* Right: Actions & User Tools */}
+            <div className="flex items-center space-x-3">
+              {/* Role Selector */}
+              <div className="hidden lg:flex items-center space-x-1.5 bg-blue-950/80 hover:bg-blue-900/90 px-3 py-1.5 rounded-lg border border-blue-700/60 transition">
+                <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
+                <label className="text-[10px] font-bold text-cyan-200 uppercase font-mono">Role:</label>
+                <select
+                  value={currentUser.role}
+                  onChange={(e) => setRole(e.target.value as UserRole)}
+                  className="text-xs font-semibold bg-transparent text-white focus:outline-none cursor-pointer [&>option]:bg-slate-900 [&>option]:text-white"
+                >
+                  <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                  <option value="STATE_ADMIN">STATE_ADMIN</option>
+                  <option value="DEPARTMENT_ADMIN">DEPARTMENT_ADMIN</option>
+                  <option value="OPERATOR">OPERATOR</option>
+                  <option value="VIEWER">VIEWER</option>
+                </select>
+              </div>
+
+              {/* User Profile Pill */}
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-blue-900 to-indigo-900 text-white px-3 py-1.5 rounded-lg shadow-sm border border-blue-700/60 text-xs font-semibold">
+                <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 text-slate-950 font-extrabold text-[10px] flex items-center justify-center shadow-sm">
+                  {currentUser.fullName.charAt(0)}
+                </div>
+                <span className="truncate max-w-[120px] font-bold hidden sm:inline">{currentUser.fullName}</span>
+                <span className="text-[10px] font-mono text-cyan-300 font-medium hidden md:inline">({currentUser.badgeNumber})</span>
+              </div>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1 text-slate-200 hover:text-white hover:bg-rose-500/20 px-2.5 py-1.5 rounded-lg transition-colors border border-blue-800/80"
+                title="Secure Logout"
+              >
+                <LogOut className="w-4 h-4 text-rose-400" />
+                <span className="text-xs font-semibold hidden md:inline">Logout</span>
+              </button>
+
+              {/* Mobile Hamburger Toggle */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="xl:hidden p-2 text-slate-200 hover:text-white hover:bg-blue-900/60 rounded-lg transition"
+                aria-label="Toggle Navigation Menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+
+          </div>
+
+          {/* Sub-navbar links for medium screens (between lg and xl) */}
+          <div className="hidden lg:flex xl:hidden border-t border-blue-800/60 py-2 space-x-1 overflow-x-auto">
+            {allNavigationItems.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.href}
+                className={({ isActive }) =>
+                  `flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    isActive
+                      ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/25 border border-blue-400/40'
+                      : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                  }`
+                }
+              >
+                <item.icon className="w-3.5 h-3.5 shrink-0" />
+                <span>{item.name}</span>
+              </NavLink>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="xl:hidden bg-blue-950 border-b border-blue-900 px-4 py-3 space-y-1 shadow-lg text-white">
+            <div className="flex items-center justify-between pb-2 border-b border-blue-800 mb-2">
+              <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider font-mono">Navigation Menu</span>
+              <div className="flex items-center space-x-1.5 bg-blue-900/80 px-2.5 py-1 rounded-lg border border-blue-700">
+                <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
+                <select
+                  value={currentUser.role}
+                  onChange={(e) => setRole(e.target.value as UserRole)}
+                  className="text-xs font-semibold bg-transparent text-white focus:outline-none [&>option]:bg-slate-900 [&>option]:text-white"
+                >
+                  <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                  <option value="STATE_ADMIN">STATE_ADMIN</option>
+                  <option value="DEPARTMENT_ADMIN">DEPARTMENT_ADMIN</option>
+                  <option value="OPERATOR">OPERATOR</option>
+                  <option value="VIEWER">VIEWER</option>
+                </select>
+              </div>
+            </div>
+            {allNavigationItems.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-blue-600 text-white font-bold shadow-md'
+                      : 'text-slate-200 hover:bg-blue-900 hover:text-white'
+                  }`
+                }
+              >
+                <item.icon className="w-4 h-4 shrink-0" />
+                <span>{item.name}</span>
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </header>
+
+      {/* Main Page Content Outlet */}
+      <main className="flex-1 max-w-[1600px] w-full mx-auto p-4 sm:p-6 lg:p-8">
+        <Outlet />
+      </main>
     </div>
   );
 };

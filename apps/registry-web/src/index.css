@@ -9,7 +9,7 @@ body,
 #root {
   height: 100%;
   margin: 0;
-  background-color: #F8FAFC;
+  background-color: #F8FBFF;
   color: #0F172A;
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -42,35 +42,35 @@ body,
   background: #94A3B8;
 }
 
-/* Ambient Glowing Background Grid Pattern */
+/* Ambient Subtle Background Grid Pattern */
 .bg-grid-pattern {
-  background-image: radial-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .bg-dark-grid-pattern {
-  background-image: radial-gradient(rgba(129, 140, 248, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* Pro Glassmorphism & Card Styling */
+/* Pro SaaS Card & Input Styling */
 .saasable-card {
   background-color: #FFFFFF;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #E2E8F0;
+  border-radius: 0.875rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+  transition: all 0.2s ease-in-out;
 }
 
 .saasable-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 12px 30px -5px rgba(79, 70, 229, 0.1), 0 6px 12px -4px rgba(15, 23, 42, 0.03);
+  border-color: #CBD5E1;
+  box-shadow: 0 4px 16px -2px rgba(37, 99, 235, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
 }
 
 .saasable-input {
-  background-color: #F8FAFC;
-  border: 1px solid #CBD5E1;
-  border-radius: 0.75rem;
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.625rem;
   font-weight: 500;
   color: #0F172A;
   transition: all 0.15s ease-in-out;
@@ -78,32 +78,33 @@ body,
 
 .saasable-input:focus {
   background-color: #FFFFFF;
-  border-color: #6366F1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   outline: none;
 }
 
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
 }
 
 .glass-card-light {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.06);
 }
 
-/* Recharts High-Contrast Text & Tooltip Styling */
+/* Recharts Tooltip & Label Styling */
 .recharts-default-tooltip {
-  background-color: #0F172A !important;
-  border: 1px solid #334155 !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
   border-radius: 0.75rem !important;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
   padding: 8px 12px !important;
 }
 
@@ -112,13 +113,13 @@ body,
 .recharts-tooltip-item-value,
 .recharts-tooltip-item-separator,
 .recharts-tooltip-label {
-  color: #F8FAFC !important;
-  font-weight: 700 !important;
+  color: #0F172A !important;
+  font-weight: 600 !important;
   font-size: 12px !important;
 }
 
 .recharts-pie-label-text {
-  fill: #1E293B !important;
-  font-weight: 700 !important;
+  fill: #334155 !important;
+  font-weight: 600 !important;
   font-size: 11px !important;
 }
