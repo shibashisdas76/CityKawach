@@ -8,7 +8,6 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -24,7 +23,11 @@
     "paths": {
       "@/*": ["src/*"],
       "@shared/*": ["../../shared/*"]
-    }
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "../../node_modules/@types"
+    ]
   },
   "include": ["src", "../../shared"]
 }

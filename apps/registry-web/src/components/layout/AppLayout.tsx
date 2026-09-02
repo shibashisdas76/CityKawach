@@ -15,13 +15,23 @@ import {
   Shield,
   LogOut,
   Menu,
-  X
+  X,
+  // VMS & Model 2 icons
+  MonitorPlay,
+  Car,
+  Globe,
+  Cpu,
+  Zap,
+  HardDrive,
+  Lock,
+  AlertTriangle,
+  Radio
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '@shared/types/cctv-metadata.contract';
 import { supabase } from '../../services/supabaseClient';
 
-const allNavigationItems = [
+const registryNavItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Camera Registry', href: '/cameras', icon: Video },
   { name: 'Add Camera', href: '/cameras/new', icon: PlusCircle },
@@ -33,6 +43,20 @@ const allNavigationItems = [
   { name: 'Reports', href: '/reports', icon: FileSpreadsheet },
   { name: 'Audit Logs', href: '/audit-logs', icon: ShieldCheck },
 ];
+
+const vmsNavItems = [
+  { name: 'VMS Overview', href: '/vms', icon: MonitorPlay },
+  { name: 'Live Video Wall', href: '/vms/live', icon: Video },
+  { name: 'ANPR Engine', href: '/vms/anpr', icon: Car },
+  { name: 'Vehicle Tracking', href: '/vms/tracking', icon: Globe },
+  { name: 'Alerts Hub', href: '/vms/alerts', icon: AlertTriangle },
+  { name: 'Analytics Engine', href: '/vms/analytics', icon: Cpu },
+  { name: 'Integration Hub', href: '/vms/integrations', icon: Zap },
+  { name: 'Storage Tiers', href: '/vms/storage', icon: HardDrive },
+  { name: 'Security', href: '/vms/security', icon: Lock },
+];
+
+const allNavigationItems = [...registryNavItems, ...vmsNavItems];
 
 export const AppLayout: React.FC = () => {
   const { currentUser, setRole } = useAuth();
@@ -62,14 +86,15 @@ export const AppLayout: React.FC = () => {
                 G
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-sm font-extrabold tracking-tight text-white uppercase">STATE CCTV REGISTRY</h1>
-                <p className="text-[10px] text-cyan-400 font-mono tracking-tight font-bold">SAASABLE COMMAND v1.0</p>
+                <h1 className="text-sm font-extrabold tracking-tight text-white uppercase">STATE CCTV PLATFORM</h1>
+                <p className="text-[10px] text-cyan-400 font-mono tracking-tight font-bold">MODEL 1 + MODEL 2 UNIFIED COMMAND</p>
               </div>
             </div>
 
             {/* Center: Desktop Navigation Bar */}
-            <nav className="hidden xl:flex items-center space-x-1 overflow-x-auto py-2">
-              {allNavigationItems.map((item) => (
+            <nav className="hidden xl:flex items-center gap-1 overflow-x-auto py-2">
+              {/* Registry Section */}
+              {registryNavItems.map((item) => (
                 <NavLink
                   key={item.name}
                   to={item.href}
@@ -78,6 +103,27 @@ export const AppLayout: React.FC = () => {
                       isActive
                         ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/25 border border-blue-400/40'
                         : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                    }`
+                  }
+                >
+                  <item.icon className="w-4 h-4 shrink-0" />
+                  <span>{item.name}</span>
+                </NavLink>
+              ))}
+              {/* VMS divider */}
+              <div className="w-px h-5 bg-blue-700/60 mx-1 shrink-0" />
+              <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest whitespace-nowrap shrink-0">M2/M4</span>
+              {/* VMS Section */}
+              {vmsNavItems.map((item) => (
+                <NavLink
+                  key={item.name}
+                  to={item.href}
+                  end={item.href === '/vms'}
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap ${
+                      isActive
+                        ? 'bg-cyan-600 text-white font-bold shadow-md shadow-cyan-500/25 border border-cyan-400/40'
+                        : 'text-cyan-200 hover:bg-cyan-900/30 hover:text-cyan-100'
                     }`
                   }
                 >

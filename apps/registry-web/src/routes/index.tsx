@@ -12,19 +12,30 @@ import { AuditLogsPage } from '../pages/audit/AuditLogsPage';
 import { HealthTelemetryPage } from '../pages/health/HealthTelemetryPage';
 import { DepartmentsPage } from '../pages/departments/DepartmentsPage';
 import { ReportsPage } from '../pages/reports/ReportsPage';
-import { LoginPage } from '../pages/auth/LoginPage'; // <-- Added Login Import
+import { LoginPage } from '../pages/auth/LoginPage';
+// ── Model 2 & Model 4: Unified Viewer & AI System ──────────────────────────
+import { VmsLandingPage } from '../pages/vms/VmsLandingPage';
+import { LiveVideoWallPage } from '../pages/vms/LiveVideoWallPage';
+import { AnprEnginePage } from '../pages/vms/AnprEnginePage';
+import { VehicleTrackingPage } from '../pages/vms/VehicleTrackingPage';
+import { AlertsHubPage } from '../pages/vms/AlertsHubPage';
+import { AnalyticsEnginePage } from '../pages/vms/AnalyticsEnginePage';
+import { IntegrationHubPage } from '../pages/vms/IntegrationHubPage';
+import { StorageTierPage } from '../pages/vms/StorageTierPage';
+import { SecurityArchitecturePage } from '../pages/vms/SecurityArchitecturePage';
 
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Public Unauthenticated Route (Outside the layout) */}
+      {/* Public Unauthenticated Route */}
       <Route path="/login" element={<LoginPage />} />
 
       {/* Protected Command Center Routes */}
       <Route path="/" element={<AppLayout />}>
-        {/* Redirect the root URL directly to the login page */}
-        <Route index element={<Navigate to="/login" replace />} />
+        {/* Redirect root URL to dashboard */}
+        <Route index element={<Navigate to="/dashboard" replace />} />
 
+        {/* ── Model 1: Central Registry & GIS ── */}
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="cameras" element={<CameraListPage />} />
         <Route path="cameras/new" element={<CameraCreatePage />} />
@@ -36,6 +47,23 @@ export const AppRoutes: React.FC = () => {
         <Route path="departments" element={<DepartmentsPage />} />
         <Route path="reports" element={<ReportsPage />} />
         <Route path="audit-logs" element={<AuditLogsPage />} />
+
+        {/* ── Model 2: Unified Viewer & Edge AI Analytics ── */}
+        <Route path="vms" element={<VmsLandingPage />} />
+        <Route path="vms/live" element={<LiveVideoWallPage />} />
+        <Route path="vms/anpr" element={<AnprEnginePage />} />
+        <Route path="vms/tracking" element={<VehicleTrackingPage />} />
+        <Route path="vms/alerts" element={<AlertsHubPage />} />
+        <Route path="vms/analytics" element={<AnalyticsEnginePage />} />
+        <Route path="vms/integrations" element={<IntegrationHubPage />} />
+        <Route path="vms/storage" element={<StorageTierPage />} />
+        <Route path="vms/security" element={<SecurityArchitecturePage />} />
+
+        {/* Model 2 Direct Aliases */}
+        <Route path="viewer" element={<LiveVideoWallPage />} />
+        <Route path="viewer/search" element={<VehicleTrackingPage />} />
+        <Route path="viewer/detections" element={<AnprEnginePage />} />
+        <Route path="viewer/alerts" element={<AlertsHubPage />} />
 
         {/* Catch-all fallback */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
