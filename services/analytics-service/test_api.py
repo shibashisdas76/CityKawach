@@ -61,8 +61,10 @@ def test_api_endpoints():
     print(f"[✓] GET /api/search?plate=GJ01AB1234: OK ({search_res['total_sightings']} checkpoints reconstructed)")
 
     # 7. Test Watchlist Registration
+    import time
+    test_plate = f"GJ01ZZ{int(time.time()) % 10000:04d}"
     resp = client.post("/api/watchlist", json={
-        "plate_number": "GJ01ZZ9999",
+        "plate_number": test_plate,
         "reason": "Test Alert Intercept Flag",
         "severity": "CRITICAL",
         "owner_name": "Test Subject",
@@ -70,7 +72,7 @@ def test_api_endpoints():
         "source": "eGujCop Test"
     })
     assert resp.status_code == 200
-    print("[✓] POST /api/watchlist: OK (Successfully registered new vehicle of interest)")
+    print(f"[✓] POST /api/watchlist: OK (Registered {test_plate} to watchlist)")
 
     # 8. Test Analytics Metrics
     resp = client.get("/api/analytics/metrics")

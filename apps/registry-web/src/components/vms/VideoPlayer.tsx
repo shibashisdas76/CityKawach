@@ -68,6 +68,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         video.play().then(() => setStatus('playing')).catch(() => setStatus('playing'));
       });
 
+      hls.on(Hls.Events.FRAG_LOADED, () => {
+        setStatus('playing');
+      });
+
+      video.onplaying = () => setStatus('playing');
+      video.onloadeddata = () => setStatus('playing');
+
       hls.on(Hls.Events.ERROR, (_evt, data) => {
         if (data.fatal) {
           const backoff = Math.min(2000 * Math.pow(2, retryRef.current), 30000);
@@ -75,7 +82,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           setStatus('reconnecting');
           retryTimerRef.current = setTimeout(initPlayer, backoff);
         }
-        // Non-fatal errors (decode warnings on join) — log only
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       // Safari native HLS

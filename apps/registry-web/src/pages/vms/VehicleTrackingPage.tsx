@@ -97,7 +97,7 @@ export const VehicleTrackingPage: React.FC = () => {
               <div>
                 <h2 className="text-xl font-extrabold text-white tracking-tight">Statewide Vehicle Movement Tracing & Trajectory Reconstructor</h2>
                 <p className="text-xs text-emerald-200 mt-0.5">
-                  Checkpoint-to-Checkpoint Journey Reconstruction Ordered by Presentation Timestamps (Model 2)
+                  Statewide Checkpoint Journey Reconstruction Ordered by Presentation Timestamps (PTS) — Model 4 Central VMS
                 </p>
               </div>
             </div>

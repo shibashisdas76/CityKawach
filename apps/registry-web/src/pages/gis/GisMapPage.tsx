@@ -199,11 +199,11 @@ export const GisMapPage: React.FC = () => {
 
           {/* Model 2 Live Sentinel Feeds Layer */}
           {showLiveLayer && sentinelCams.map((scam, i) => {
-            // Compute approximate coordinates across Gujarat cities
-            const latBase = 23.03 + (i % 6) * 0.03 - (i % 3) * 0.02;
-            const lngBase = 72.58 + (i % 5) * 0.04 - (i % 2) * 0.03;
+            // Use real enriched Gujarat GPS coordinates
+            const camLat = scam.latitude || 23.03 + (i % 6) * 0.02;
+            const camLng = scam.longitude || 72.58 + (i % 5) * 0.03;
             return (
-              <Marker key={`live-${scam.id}`} position={[latBase, lngBase]} icon={liveStreamMarker()}>
+              <Marker key={`live-${scam.id}`} position={[camLat, camLng]} icon={liveStreamMarker()}>
                 <Popup>
                   <div className="text-xs space-y-2 font-sans min-w-[220px]">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
@@ -218,8 +218,10 @@ export const GisMapPage: React.FC = () => {
                     <p className="font-bold text-slate-900">{scam.name}</p>
                     <p className="text-slate-500 text-[11px]">{scam.location}</p>
                     <div className="bg-slate-50 rounded-lg p-2 text-[10px] space-y-1">
+                      <div className="flex justify-between"><span className="text-slate-500">District:</span><span className="font-semibold text-slate-700">{scam.district || 'Gujarat'}</span></div>
                       <div className="flex justify-between"><span className="text-slate-500">Department:</span><span className="font-semibold text-slate-700">{scam.department}</span></div>
                       <div className="flex justify-between"><span className="text-slate-500">Codec:</span><span className="font-mono uppercase font-bold text-blue-600">{scam.codec}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">GPS:</span><span className="font-mono text-slate-600 font-semibold">{camLat.toFixed(4)}, {camLng.toFixed(4)}</span></div>
                       <div className="flex justify-between"><span className="text-slate-500">AI Edge Analytics:</span><span className="font-bold text-emerald-600">✓ ACTIVE (YOLO)</span></div>
                     </div>
                     <div className="flex gap-2 pt-1">

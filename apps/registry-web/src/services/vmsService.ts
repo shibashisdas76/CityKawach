@@ -17,37 +17,37 @@ import {
   VahanRecord,
 } from '../types/camera.types';
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 const SENTINEL_BASE = 'https://cctv.corp8.cloud';
 
-// Gujarat location heuristic
-const LOCATION_ENRICHMENT: Record<string, { district: string; department: string; lat: number; lng: number }> = {
-  'chiman bhai': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.06, lng: 72.58 },
-  'janpath': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.04, lng: 72.57 },
-  'o.n.g.c': { district: 'Ahmedabad', department: 'State Police', lat: 23.09, lng: 72.59 },
-  'paldi': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.01, lng: 72.56 },
-  'visat': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.10, lng: 72.59 },
-  'timbavadi': { district: 'Junagadh', department: 'Municipal Corp', lat: 21.51, lng: 70.47 },
-  'somnath': { district: 'Gir Somnath', department: 'Traffic Police', lat: 20.90, lng: 70.40 },
-  'majewadi': { district: 'Junagadh', department: 'Municipal Corp', lat: 21.53, lng: 70.45 },
-  'bypass': { district: 'Junagadh', department: 'State Highways', lat: 21.55, lng: 70.48 },
-  'char-chowk': { district: 'Junagadh', department: 'Municipal Corp', lat: 21.52, lng: 70.46 },
-  'dolatpara': { district: 'Junagadh', department: 'Traffic Police', lat: 21.54, lng: 70.44 },
-  'adalaj': { district: 'Gandhinagar', department: 'Transport Dept', lat: 23.16, lng: 72.58 },
-  'cn vidhyalaya': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.02, lng: 72.55 },
-  'delight': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.05, lng: 72.60 },
-  'suvidha': { district: 'Ahmedabad', department: 'Municipal Corp', lat: 23.03, lng: 72.56 },
-  'rajkot': { district: 'Rajkot', department: 'Traffic Police', lat: 22.30, lng: 70.80 },
-  'navsari': { district: 'Navsari', department: 'Rural Police', lat: 20.95, lng: 72.93 },
-  'mohanpura': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.03, lng: 72.59 },
-  'patan': { district: 'Patan', department: 'Traffic Police', lat: 23.85, lng: 72.12 },
-  'mervada': { district: 'Banaskantha', department: 'State Police', lat: 24.17, lng: 72.43 },
-  'kheram': { district: 'Navsari', department: 'Rural Police', lat: 20.85, lng: 72.90 },
-  'dehgam': { district: 'Gandhinagar', department: 'State Highways', lat: 23.16, lng: 72.81 },
-  'dhanori': { district: 'Navsari', department: 'Rural Police', lat: 20.92, lng: 72.96 },
-  'tankal': { district: 'Navsari', department: 'Rural Police', lat: 20.88, lng: 73.05 },
-  'bilimora': { district: 'Navsari', department: 'Municipal Corp', lat: 20.76, lng: 72.96 },
-  'gandhidham': { district: 'Kutch', department: 'Port Authority', lat: 23.07, lng: 70.13 },
+// Gujarat location heuristic with precise geographic coordinates
+export const LOCATION_ENRICHMENT: Record<string, { district: string; department: string; lat: number; lng: number }> = {
+  'chiman bhai': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.0611, lng: 72.5833 },
+  'janpath': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.0425, lng: 72.5714 },
+  'o.n.g.c': { district: 'Ahmedabad', department: 'State Police', lat: 23.0921, lng: 72.5945 },
+  'paldi': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.0145, lng: 72.5623 },
+  'visat': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.1044, lng: 72.5912 },
+  'timbavadi': { district: 'Junagadh', department: 'Municipal Corp', lat: 21.5144, lng: 70.4712 },
+  'somnath': { district: 'Gir Somnath', department: 'Traffic Police', lat: 20.9011, lng: 70.4022 },
+  'majewadi': { district: 'Junagadh', department: 'Municipal Corp', lat: 21.5322, lng: 70.4533 },
+  'bypass': { district: 'Junagadh', department: 'State Highways', lat: 21.5544, lng: 70.4812 },
+  'char-chowk': { district: 'Junagadh', department: 'Municipal Corp', lat: 21.5211, lng: 70.4633 },
+  'dolatpara': { district: 'Junagadh', department: 'Traffic Police', lat: 21.5433, lng: 70.4412 },
+  'adalaj': { district: 'Gandhinagar', department: 'Transport Dept', lat: 23.1645, lng: 72.5810 },
+  'cn vidhyalaya': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.0233, lng: 72.5512 },
+  'delight': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.0511, lng: 72.6022 },
+  'suvidha': { district: 'Ahmedabad', department: 'Municipal Corp', lat: 23.0344, lng: 72.5633 },
+  'rajkot': { district: 'Rajkot', department: 'Traffic Police', lat: 22.3039, lng: 70.8022 },
+  'navsari': { district: 'Navsari', department: 'Rural Police', lat: 20.9500, lng: 72.9300 },
+  'mohanpura': { district: 'Ahmedabad', department: 'Traffic Police', lat: 23.0311, lng: 72.5922 },
+  'patan': { district: 'Patan', department: 'Traffic Police', lat: 23.8500, lng: 72.1200 },
+  'mervada': { district: 'Banaskantha', department: 'State Police', lat: 24.1700, lng: 72.4300 },
+  'kheram': { district: 'Navsari', department: 'Rural Police', lat: 20.8500, lng: 72.9000 },
+  'dehgam': { district: 'Gandhinagar', department: 'State Highways', lat: 23.1600, lng: 72.8100 },
+  'dhanori': { district: 'Navsari', department: 'Rural Police', lat: 20.9200, lng: 72.9600 },
+  'tankal': { district: 'Navsari', department: 'Rural Police', lat: 20.8800, lng: 73.0500 },
+  'bilimora': { district: 'Navsari', department: 'Municipal Corp', lat: 20.7621, lng: 72.9644 },
+  'gandhidham': { district: 'Kutch', department: 'Port Authority', lat: 23.0753, lng: 70.1337 },
 };
 
 const WATCHLIST = new Set([
@@ -122,25 +122,27 @@ class VmsService {
   public getCatalogue(): SentinelCamera[] { return this.sentinelCameras; }
 
   public getHlsUrl(cam: SentinelCamera): string {
-    if (cam.hls_url && cam.hls_url.startsWith('http')) return cam.hls_url;
-    return `http://127.0.0.1:8000/api/stream/${cam.id}/index.m3u8`;
+    return `${API_BASE_URL}/api/stream/${cam.id}/index.m3u8`;
   }
 
   public getWhepUrl(cam: SentinelCamera): string {
-    return cam.webrtc_url || `http://cctv.corp8.cloud:8889/stream/${cam.number || cam.id}/whep`;
+    return cam.webrtc_url || `http://103.250.160.189:8889/stream/${cam.number || cam.id}/whep`;
   }
 
   private normalizeCamera(raw: any): SentinelCamera {
     const name = raw.name || `Camera ${raw.id}`;
     const enrichment = this.resolveEnrichment(name);
+    const num = raw.number || parseInt(String(raw.id).replace(/\D/g, '') || '1', 10);
 
     return {
       id: String(raw.id || raw.number),
-      number: raw.number || parseInt(String(raw.id).replace(/\D/g, '') || '1', 10),
+      number: num,
       name,
       location: raw.location || enrichment.location,
       district: raw.district || enrichment.district,
       department: raw.department || enrichment.department,
+      latitude: raw.latitude || enrichment.lat,
+      longitude: raw.longitude || enrichment.lng,
       codec: raw.codec || 'h264',
       live: raw.status === 'online' || raw.live !== false,
       width: raw.width || 1920,
@@ -148,10 +150,10 @@ class VmsService {
       fps: raw.fps || 25,
       bitrate_kbps: raw.bitrate_kbps || 1500,
       bits_per_pixel: 0.035,
-      hls_url: raw.hls_url || `${SENTINEL_BASE}/${raw.id}/index.m3u8`,
-      hls_live_url: `/${raw.id}/index.m3u8`,
-      rtsp_url: raw.rtsp_url || `rtsp://cctv.corp8.cloud:8554/stream/${raw.number || raw.id}`,
-      webrtc_url: raw.webrtc_url || `http://cctv.corp8.cloud:8889/stream/${raw.number || raw.id}/whep`,
+      hls_url: `${API_BASE_URL}/api/stream/${raw.id}/index.m3u8`,
+      hls_live_url: `/api/stream/${raw.id}/index.m3u8`,
+      rtsp_url: raw.rtsp_url || `rtsp://dasshibashis76%40gmail.com:8SNR-B7W4-QR4X@103.250.160.189:8554/stream/${num}`,
+      webrtc_url: raw.webrtc_url || `http://103.250.160.189:8889/stream/${num}/whep`,
       ai_active: true,
       analytics: this.generateAnalytics(),
     };
@@ -164,14 +166,18 @@ class VmsService {
         return {
           district: meta.district,
           department: meta.department,
-          location: name.replace(/^\d+\s*/, '')
+          location: name.replace(/^\d+\s*/, ''),
+          lat: meta.lat,
+          lng: meta.lng
         };
       }
     }
     return {
       district: 'Gujarat',
       department: 'Traffic Police',
-      location: name.replace(/^\d+\s*/, '')
+      location: name.replace(/^\d+\s*/, ''),
+      lat: 23.0300,
+      lng: 72.5800
     };
   }
 
@@ -215,10 +221,10 @@ class VmsService {
         fps: 25,
         bitrate_kbps: 1200 + (i * 40),
         bits_per_pixel: 0.035,
-        hls_url: `${SENTINEL_BASE}/${id}/index.m3u8`,
-        hls_live_url: `/${id}/index.m3u8`,
-        rtsp_url: `rtsp://cctv.corp8.cloud:8554/stream/${num}`,
-        webrtc_url: `http://cctv.corp8.cloud:8889/stream/${num}/whep`,
+        hls_url: `${API_BASE_URL}/api/stream/${id}/index.m3u8`,
+        hls_live_url: `/api/stream/${id}/index.m3u8`,
+        rtsp_url: `rtsp://dasshibashis76%40gmail.com:8SNR-B7W4-QR4X@103.250.160.189:8554/stream/${num}`,
+        webrtc_url: `http://103.250.160.189:8889/stream/${num}/whep`,
         ai_active: true,
         analytics: this.generateAnalytics(),
       };

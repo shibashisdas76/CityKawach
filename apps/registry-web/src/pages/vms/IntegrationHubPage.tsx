@@ -1,226 +1,479 @@
-import React, { useState } from 'react';
-import { vmsService } from '../../services/vmsService';
-import { IntegrationStatusCard } from '../../components/vms/IntegrationStatusCard';
-import { IntegrationEndpoint } from '../../types/camera.types';
-import { Loader2, Search, Fingerprint, Car, CheckCircle2, XCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  Zap,
+  Car,
+  CreditCard,
+  Shield,
+  Fingerprint,
+  FileText,
+  Search,
+  CheckCircle2,
+  AlertTriangle,
+  RefreshCw,
+  Activity,
+  Layers,
+  ArrowRight,
+  Database,
+  Lock
+} from 'lucide-react';
+import { model4Service } from '../../services/model4Service';
+import { IntegrationSyncStatus, VahanRecordData, SarthiRecordData, EgujcopRecordData, NafisRecordData } from '../../types/model4.types';
+
+type IntegrationTab = 'VAHAN' | 'SARTHI' | 'EGUJCOP' | 'NAFIS' | 'CCTNS';
 
 export const IntegrationHubPage: React.FC = () => {
-  const [integrations] = useState(vmsService.getIntegrations());
-  const [activeTab, setActiveTab] = useState<'VAHAN' | 'AFIS'>('VAHAN');
-  const [plateLookup, setPlateLookup] = useState('');
-  const [vahanResult, setVahanResult] = useState<any>(null);
-  const [vahanLoading, setVahanLoading] = useState(false);
-  const [faceDesc, setFaceDesc] = useState('');
-  const [faceResult, setFaceResult] = useState<{ name: string; id: string; status: string } | null | undefined>(undefined);
-  const [faceLoading, setFaceLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<IntegrationTab>('VAHAN');
+  const [syncStatus, setSyncStatus] = useState<IntegrationSyncStatus[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleVahan = async () => {
-    if (!plateLookup.trim()) return;
+  // VAHAN Query state
+  const [vahanPlate, setVahanPlate] = useState('GJ01AB1234');
+  const [vahanResult, setVahanResult] = useState<VahanRecordData | null>(null);
+  const [vahanLoading, setVahanLoading] = useState(false);
+
+  // SARTHI Query state
+  const [sarthiDl, setSarthiDl] = useState('GJ01-20150019284');
+  const [sarthiResult, setSarthiResult] = useState<SarthiRecordData | null>(null);
+  const [sarthiLoading, setSarthiLoading] = useState(false);
+
+  // eGujCop Query state
+  const [egujcopQuery, setEgujcopQuery] = useState('GJ01AB1234');
+  const [egujcopResults, setEgujcopResults] = useState<EgujcopRecordData[]>([]);
+  const [egujcopLoading, setEgujcopLoading] = useState(false);
+
+  // NAFIS Query state
+  const [nafisQuery, setNafisQuery] = useState('NAFIS-GJ-2024-9912');
+  const [nafisResults, setNafisResults] = useState<NafisRecordData[]>([]);
+  const [nafisLoading, setNafisLoading] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      const stats = await model4Service.getIntegrationsSync();
+      setSyncStatus(stats);
+      setLoading(false);
+      // Auto-run initial VAHAN query
+      handleQueryVahan();
+    };
+    load();
+  }, []);
+
+  const handleQueryVahan = async () => {
+    if (!vahanPlate.trim()) return;
     setVahanLoading(true);
-    setVahanResult(null);
-    const r = await vmsService.lookupVahan(plateLookup.trim().toUpperCase());
-    setVahanResult(r);
+    const res = await model4Service.lookupVahan(vahanPlate.trim());
+    setVahanResult(res);
     setVahanLoading(false);
   };
 
-  const handleFace = async () => {
-    if (!faceDesc.trim()) return;
-    setFaceLoading(true);
-    setFaceResult(undefined);
-    const r = await vmsService.lookupFace(faceDesc.trim());
-    setFaceResult(r);
-    setFaceLoading(false);
+  const handleQuerySarthi = async () => {
+    if (!sarthiDl.trim()) return;
+    setSarthiLoading(true);
+    const res = await model4Service.lookupSarthi(sarthiDl.trim());
+    setSarthiResult(res);
+    setSarthiLoading(false);
   };
 
-  const connected = integrations.filter(i => i.status === 'CONNECTED').length;
-  const degraded = integrations.filter(i => i.status === 'DEGRADED').length;
+  const handleQueryEgujcop = async () => {
+    if (!egujcopQuery.trim()) return;
+    setEgujcopLoading(true);
+    const res = await model4Service.lookupEgujcop(egujcopQuery.trim());
+    setEgujcopResults(res);
+    setEgujcopLoading(false);
+  };
+
+  const handleQueryNafis = async () => {
+    if (!nafisQuery.trim()) return;
+    setNafisLoading(true);
+    const res = await model4Service.lookupNafis(nafisQuery.trim());
+    setNafisResults(res);
+    setNafisLoading(false);
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-pink-950 to-rose-950 rounded-2xl p-6 border border-pink-700/40">
-        <h2 className="text-lg font-black text-white">Integration Hub</h2>
-        <p className="text-xs text-pink-300 mt-1">
-          Real-time connectivity status for all external government database integrations
-        </p>
-        <div className="flex gap-4 mt-4">
-          <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-xl px-4 py-2">
-            <p className="text-xl font-black text-emerald-300">{connected}</p>
-            <p className="text-[10px] text-emerald-400">Connected</p>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-slate-900 via-pink-950 to-slate-900 rounded-2xl p-6 border border-pink-800/40 text-white shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="px-2.5 py-0.5 bg-pink-500/30 text-pink-300 font-mono text-xs font-bold rounded-md border border-pink-500/40 uppercase">
+              MODEL 4 AUTHORISED INTEGRATIONS
+            </span>
+            <span className="text-xs text-slate-400 font-mono">VAHAN · SARTHI · EGUJCOP · AFIS/NAFIS · CCTNS</span>
           </div>
-          <div className="bg-amber-500/20 border border-amber-500/30 rounded-xl px-4 py-2">
-            <p className="text-xl font-black text-amber-300">{degraded}</p>
-            <p className="text-[10px] text-amber-400">Degraded</p>
-          </div>
-          <div className="bg-white/10 rounded-xl px-4 py-2">
-            <p className="text-xl font-black text-white">{integrations.length}</p>
-            <p className="text-[10px] text-pink-300">Total Systems</p>
+          <h1 className="text-2xl font-black tracking-tight text-white">
+            Authorised Government Database Integrations Hub
+          </h1>
+          <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+            Live bidirectional federated query bus connecting Gujarat Central VMS directly with National and State
+            regulatory and law enforcement databases.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="bg-emerald-500/20 border border-emerald-500/40 px-3.5 py-2 rounded-xl text-xs font-mono font-bold text-emerald-300 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>5/5 AUTHORISED GATEWAYS CONNECTED</span>
           </div>
         </div>
       </div>
 
-      {/* Integration cards grid */}
-      <div>
-        <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">System Status</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {integrations.map(ep => (
-            <IntegrationStatusCard key={ep.id} endpoint={ep} />
-          ))}
-        </div>
-      </div>
-
-      {/* Live Query Console */}
-      <div>
-        <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">Live Query Console</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* VAHAN Lookup */}
-          <div className="bg-slate-900 rounded-2xl border border-slate-700/60 p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center">
-                <Car className="w-4 h-4 text-blue-400" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-white">VAHAN 4.0 Lookup</p>
-                <p className="text-[10px] text-slate-400">Vehicle registration & owner details</p>
-              </div>
+      {/* Sync Status Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
+        {syncStatus.map(sync => (
+          <div key={sync.id} className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black font-mono text-slate-900">{sync.id}</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </div>
-            <div className="flex gap-2 mb-4">
+            <p className="text-xs font-bold text-slate-700 truncate">{sync.name.split('(')[0]}</p>
+            <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-1 border-t border-slate-100">
+              <span>Latency: <b>{sync.latency_ms}ms</b></span>
+              <span>SLA: <b>{sync.uptime_sla}</b></span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Interactive Query Studio */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto">
+          <button
+            onClick={() => {
+              setActiveTab('VAHAN');
+              handleQueryVahan();
+            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition ${
+              activeTab === 'VAHAN'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <Car className="w-4 h-4" />
+            VAHAN 4.0 (Vehicle Registry)
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('SARTHI');
+              handleQuerySarthi();
+            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition ${
+              activeTab === 'SARTHI'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <CreditCard className="w-4 h-4" />
+            SARTHI (Driving License)
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('EGUJCOP');
+              handleQueryEgujcop();
+            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition ${
+              activeTab === 'EGUJCOP'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <Shield className="w-4 h-4" />
+            eGujCop (Police FIR & Stolen)
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('NAFIS');
+              handleQueryNafis();
+            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition ${
+              activeTab === 'NAFIS'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <Fingerprint className="w-4 h-4" />
+            AFIS / NAFIS (Biometrics)
+          </button>
+        </div>
+
+        {/* ─── VAHAN Query Console ─── */}
+        {activeTab === 'VAHAN' && (
+          <div className="space-y-4">
+            <div className="flex gap-2 max-w-xl">
               <input
                 type="text"
-                value={plateLookup}
-                onChange={e => setPlateLookup(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleVahan()}
-                placeholder="Enter plate e.g. GJ-01-AB-1234"
-                className="flex-1 bg-slate-800 text-white text-xs px-3 py-2.5 rounded-xl border border-slate-600 focus:outline-none focus:border-blue-500 font-mono uppercase"
+                value={vahanPlate}
+                onChange={e => setVahanPlate(e.target.value)}
+                placeholder="Enter license plate (e.g. GJ01AB1234)..."
+                className="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <button
-                onClick={handleVahan}
+                onClick={handleQueryVahan}
                 disabled={vahanLoading}
-                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5"
+                className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-md"
               >
-                {vahanLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-                Query
+                {vahanLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                Lookup VAHAN
               </button>
             </div>
+
             {vahanResult && (
-              <div className={`rounded-xl border p-4 space-y-2 text-xs ${vahanResult.blacklisted ? 'bg-rose-950/40 border-rose-500/40' : 'bg-slate-800/60 border-slate-700'}`}>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="font-black text-white font-mono">{vahanResult.plate}</p>
-                  {vahanResult.blacklisted && (
-                    <span className="text-[10px] font-bold bg-rose-500/30 text-rose-300 px-2 py-0.5 rounded-full">⚠ BLACKLISTED</span>
+              <div
+                className={`rounded-2xl p-6 border space-y-4 ${
+                  vahanResult.blacklisted ? 'bg-rose-50/40 border-rose-300' : 'bg-slate-50 border-slate-200'
+                }`}
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                  <div>
+                    <span className="text-base font-black font-mono text-slate-900">{vahanResult.plate_number}</span>
+                    <p className="text-xs text-slate-500 font-semibold">{vahanResult.maker_model}</p>
+                  </div>
+                  {vahanResult.blacklisted ? (
+                    <span className="px-3 py-1 bg-rose-100 text-rose-800 border border-rose-300 text-xs font-black uppercase rounded-lg">
+                      ⚠️ BLACKLISTED / WANTED
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold uppercase rounded-lg">
+                      ✓ RC ACTIVE & VERIFIED
+                    </span>
                   )}
                 </div>
-                {[
-                  ['Owner', vahanResult.ownerName],
-                  ['Vehicle Class', vahanResult.vehicleClass],
-                  ['Fuel Type', vahanResult.fuelType],
-                  ['Registration Date', vahanResult.registrationDate],
-                  ['Insurance', vahanResult.insuranceValid ? '✓ Valid' : '✗ Expired'],
-                  ['Fitness Certificate', vahanResult.fitnessValid ? '✓ Valid' : '✗ Expired'],
-                  ['Pending Challans', `${vahanResult.challanCount}`],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex justify-between py-1 border-b border-slate-700/50">
-                    <span className="text-slate-400">{label}</span>
-                    <span className={`font-semibold ${label === 'Insurance' && !vahanResult.insuranceValid ? 'text-rose-400' : 'text-slate-200'}`}>{value}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* AFIS/NAFIS Face Query */}
-          <div className="bg-slate-900 rounded-2xl border border-slate-700/60 p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-violet-600/20 flex items-center justify-center">
-                <Fingerprint className="w-4 h-4 text-violet-400" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-white">AFIS / NAFIS Query</p>
-                <p className="text-[10px] text-slate-400">Biometric facial / fingerprint identification</p>
-              </div>
-            </div>
-            <div className="flex gap-2 mb-4">
-              <input
-                type="text"
-                value={faceDesc}
-                onChange={e => setFaceDesc(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleFace()}
-                placeholder="Subject description or ID…"
-                className="flex-1 bg-slate-800 text-white text-xs px-3 py-2.5 rounded-xl border border-slate-600 focus:outline-none focus:border-violet-500"
-              />
-              <button
-                onClick={handleFace}
-                disabled={faceLoading}
-                className="bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5"
-              >
-                {faceLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-                Search
-              </button>
-            </div>
-            {faceResult !== undefined && (
-              <div className={`rounded-xl border p-4 ${faceResult === null ? 'bg-slate-800/60 border-slate-700' : faceResult.status === 'WANTED' ? 'bg-rose-950/40 border-rose-500/40' : 'bg-emerald-950/40 border-emerald-500/40'}`}>
-                {faceResult === null ? (
-                  <div className="flex items-center gap-2 text-slate-400 text-xs">
-                    <XCircle className="w-4 h-4" /> No biometric match found in AFIS/NAFIS database
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Owner Name</span>
+                    <b className="text-slate-800 text-sm">{vahanResult.owner_name}</b>
                   </div>
-                ) : (
-                  <div className="space-y-2 text-xs">
-                    <div className="flex items-center justify-between">
-                      <p className="font-black text-white">{faceResult.name}</p>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${faceResult.status === 'WANTED' ? 'bg-rose-500/30 text-rose-300' : 'bg-emerald-500/20 text-emerald-400'}`}>
-                        {faceResult.status}
-                      </span>
-                    </div>
-                    <div className="flex justify-between border-b border-slate-700/50 pb-1">
-                      <span className="text-slate-400">Record ID</span>
-                      <span className="font-mono text-slate-200">{faceResult.id}</span>
-                    </div>
-                    {faceResult.status === 'WANTED' && (
-                      <div className="flex items-start gap-2 bg-rose-900/30 rounded-lg p-2 mt-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
-                        <p className="text-[10px] text-rose-300">Alert issued — coordinate with field units and eGujCop immediately</p>
-                      </div>
-                    )}
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Vehicle Class</span>
+                    <b className="text-slate-800">{vahanResult.vehicle_class}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Fuel Type</span>
+                    <b className="text-slate-800">{vahanResult.fuel_type}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">RTO Authority</span>
+                    <b className="text-slate-800">{vahanResult.rto_location}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Chassis Number</span>
+                    <b className="text-slate-700">{vahanResult.chassis_number}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Engine Number</span>
+                    <b className="text-slate-700">{vahanResult.engine_number}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Fitness Validity</span>
+                    <b className="text-slate-700">{vahanResult.fitness_upto}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Insurance Upto</span>
+                    <b className="text-slate-700">{vahanResult.insurance_valid_upto}</b>
+                  </div>
+                </div>
+
+                {vahanResult.blacklisted === 1 && (
+                  <div className="bg-rose-100 border border-rose-200 rounded-xl p-3 text-xs text-rose-900 font-bold">
+                    🚨 Flag Reason: {vahanResult.blacklist_reason}
                   </div>
                 )}
               </div>
             )}
+          </div>
+        )}
 
-            {/* Sample queries */}
-            <div className="mt-4">
-              <p className="text-[10px] text-slate-500 mb-2 font-semibold uppercase tracking-wider">Try a sample query:</p>
-              <div className="flex gap-2 flex-wrap">
-                {['Suspect near Nehru Bridge', 'Male 25-30 blue shirt', 'Face match from cam 6'].map(q => (
-                  <button
-                    key={q}
-                    onClick={() => setFaceDesc(q)}
-                    className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-2 py-1 rounded-lg transition-colors border border-slate-700"
+        {/* ─── SARTHI Query Console ─── */}
+        {activeTab === 'SARTHI' && (
+          <div className="space-y-4">
+            <div className="flex gap-2 max-w-xl">
+              <input
+                type="text"
+                value={sarthiDl}
+                onChange={e => setSarthiDl(e.target.value)}
+                placeholder="Enter DL number (e.g. GJ01-20150019284)..."
+                className="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleQuerySarthi}
+                disabled={sarthiLoading}
+                className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-md"
+              >
+                {sarthiLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                Lookup SARTHI
+              </button>
+            </div>
+
+            {sarthiResult && (
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                  <div>
+                    <span className="text-base font-black font-mono text-slate-900">{sarthiResult.dl_number}</span>
+                    <p className="text-xs text-slate-500 font-semibold">{sarthiResult.holder_name}</p>
+                  </div>
+                  <span
+                    className={`px-3 py-1 text-xs font-bold uppercase rounded-lg ${
+                      sarthiResult.license_status === 'ACTIVE'
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-rose-100 text-rose-800 border border-rose-300'
+                    }`}
                   >
-                    {q}
-                  </button>
-                ))}
+                    STATUS: {sarthiResult.license_status}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Holder Name</span>
+                    <b className="text-slate-800 text-sm">{sarthiResult.holder_name}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Date of Birth</span>
+                    <b className="text-slate-800">{sarthiResult.date_of_birth}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Blood Group</span>
+                    <b className="text-slate-800">{sarthiResult.blood_group || 'O+ve'}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Endorsements</span>
+                    <b className="text-slate-800">{sarthiResult.endorsements}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Valid From</span>
+                    <b className="text-slate-700">{sarthiResult.valid_from}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Valid Upto</span>
+                    <b className="text-slate-700">{sarthiResult.valid_upto}</b>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase block">Issuing RTO</span>
+                    <b className="text-slate-700">{sarthiResult.issuing_rto}</b>
+                  </div>
+                </div>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── eGujCop Query Console ─── */}
+        {activeTab === 'EGUJCOP' && (
+          <div className="space-y-4">
+            <div className="flex gap-2 max-w-xl">
+              <input
+                type="text"
+                value={egujcopQuery}
+                onChange={e => setEgujcopQuery(e.target.value)}
+                placeholder="Enter FIR number or stolen vehicle plate..."
+                className="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleQueryEgujcop}
+                disabled={egujcopLoading}
+                className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-md"
+              >
+                {egujcopLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                Query eGujCop
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {egujcopResults.map((fir, i) => (
+                <div key={i} className="bg-rose-50/40 rounded-2xl p-5 border border-rose-300 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-black text-rose-900 text-sm">{fir.fir_number}</span>
+                    <span className="px-2.5 py-1 bg-rose-100 text-rose-800 text-[10px] font-bold uppercase rounded-lg">
+                      {fir.status}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono pt-1">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Police Station</span>
+                      <b className="text-slate-800">{fir.police_station}</b>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Crime Type</span>
+                      <b className="text-slate-800">{fir.crime_type}</b>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">IPC Sections</span>
+                      <b className="text-slate-800">{fir.ipc_sections}</b>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Investigating Officer</span>
+                      <b className="text-slate-800">{fir.io_name}</b>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Integration architecture note */}
-      <div className="bg-blue-950/30 border border-blue-700/40 rounded-2xl p-5">
-        <h3 className="text-sm font-bold text-blue-300 mb-2">Integration Architecture</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-          {[
-            { title: 'Protocol', value: 'REST + GraphQL over mTLS' },
-            { title: 'Auth', value: 'OAuth 2.0 + API Key rotation' },
-            { title: 'SLA', value: '99.9% uptime per integration' },
-            { title: 'Audit', value: 'Every query logged to immutable ledger' },
-          ].map(item => (
-            <div key={item.title} className="bg-slate-900/60 rounded-xl p-3">
-              <p className="text-[10px] text-slate-500 font-medium">{item.title}</p>
-              <p className="text-slate-200 font-semibold mt-1">{item.value}</p>
+        {/* ─── NAFIS Query Console ─── */}
+        {activeTab === 'NAFIS' && (
+          <div className="space-y-4">
+            <div className="flex gap-2 max-w-xl">
+              <input
+                type="text"
+                value={nafisQuery}
+                onChange={e => setNafisQuery(e.target.value)}
+                placeholder="Enter NAFIS ID or suspect name..."
+                className="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleQueryNafis}
+                disabled={nafisLoading}
+                className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-md"
+              >
+                {nafisLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                Query NAFIS
+              </button>
             </div>
-          ))}
-        </div>
+
+            <div className="space-y-3">
+              {nafisResults.map((naf, i) => (
+                <div key={i} className="bg-purple-50/40 rounded-2xl p-5 border border-purple-300 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-mono font-black text-purple-900 text-sm">{naf.nafis_id}</span>
+                      <h4 className="text-base font-extrabold text-slate-900">{naf.person_name}</h4>
+                    </div>
+                    {naf.red_corner_alert ? (
+                      <span className="px-3 py-1 bg-red-600 text-white text-xs font-black uppercase rounded-lg animate-pulse">
+                        RED CORNER BOLO ALERT
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Crime Category</span>
+                      <b className="text-slate-800">{naf.crime_category}</b>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Wanted By</span>
+                      <b className="text-slate-800">{naf.wanted_by_state}</b>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Gender / Age</span>
+                      <b className="text-slate-800">{naf.gender} · {naf.age} yrs</b>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Last Location</span>
+                      <b className="text-slate-800">{naf.last_known_location}</b>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

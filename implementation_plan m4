@@ -1,0 +1,145 @@
+# Implementation Plan — Model 4: Consolidated Central VMS Platform
+
+Develop and integrate **Model 4 (Consolidated Central Video Management System)** into the Sentinel Gujarat CCTV Platform (`Model-1`). This implementation delivers a production-grade, state-scale VMS capable of centralised multi-department feed ingestion, multi-task AI analytics (ANPR, Face Recognition, Crowd Density, Anomaly Detection), statewide vehicle route reconstruction, authorised government database integrations (VAHAN, SARTHI, eGujCop, AFIS/NAFIS, CCTNS), tiered storage (Hot, Warm, Cold with Ceph/S3), 80,000 camera scalability & load testing, disaster recovery (SDC & DRS), and zero-trust security architecture.
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Sentinel Sandbox Credentials**: The backend gateway will connect to `https://cctv.corp8.cloud/` using password `8SNR-B7W4-QR4X` and will automatically provide an authenticated local HLS proxy (`/api/stream/{cam_id}/index.m3u8`), RTSP over TCP endpoints (`rtsp://cctv.corp8.cloud:8554/stream/{id}`), and WebRTC WHEP URLs (`http://cctv.corp8.cloud:8889/stream/{id}/whep`) with monotonic PTS timestamps.
+> - **Multi-Task AI Architecture**: The AI subsystem provides real-time multi-task inference covering:
+>   1. **ANPR**: Optical plate recognition, vehicle type, velocity, and watchlist matching.
+>   2. **Facial Recognition (FR)**: Biometric face detection & AFIS/NAFIS criminal matching score.
+>   3. **Crowd & Vehicle Counting**: Real-time crowd density heatmaps and throughput analytics.
+>   4. **Anomaly & Threat Detection**: Unattended baggage, perimeter tripwire breach, wrong-way driving, overcrowding hazards.
+> - **80,000 Camera Scalability Lab**: An interactive load-testing lab is included with synthetic stress generators simulating up to 80,000 camera streams, calculating 160 Gbps aggregate bandwidth, GPU node dimensioning, Kafka partitioning, and Kubernetes deployment manifests.
+
+---
+
+## Proposed Changes
+
+### 1. Backend: Python FastAPI Microservice (`services/analytics-service`)
+
+#### [NEW] [`vms_model4_db.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/vms_model4_db.py)
+- SQLite database schema and persistence layer for Model 4:
+  - `vms_recordings`: Video chunk metadata, hot/warm/cold storage tier, PTS timestamps, bookmarks.
+  - `vms_face_detections`: Biometric face sightings, embeddings, AFIS/NAFIS match scores, criminal profile linkages.
+  - `vms_crowd_metrics`: Density percent, pedestrian count, vehicle rate per camera and timestamp.
+  - `vms_anomalies`: Anomaly type (TRIPWIRE, WRONG_WAY, UNATTENDED_BAG, OVERCROWDING), bounding box, severity, status.
+  - `vms_vahan_records`: National vehicle registration database records (owner, RC status, chassis, engine, fitness).
+  - `vms_sarthi_records`: National driving license database records (DL status, holder info, validity, classes).
+  - `vms_egujcop_records`: Gujarat Police FIR and stolen vehicle records.
+  - `vms_nafis_records`: National automated fingerprint/biometric identification records.
+  - `vms_dr_logs`: Disaster recovery failover drill execution logs.
+  - `vms_audit_trail`: Tamper-proof evidentiary export and user action logs.
+
+#### [NEW] [`ai_multitask_engine.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/ai_multitask_engine.py)
+- Multi-task Computer Vision engine supporting:
+  - ANPR with YOLOv8 & OCR with PTS-driven monotonic speed calculation.
+  - Face Recognition embedding extractor and distance metric matching against AFIS/NAFIS.
+  - Crowd density & pedestrian footfall counter with heatmap matrix generation.
+  - Spatial-temporal anomaly detector (tripwire intrusion, wrong-way driving, abandoned luggage).
+
+#### [NEW] [`load_test_engine.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/load_test_engine.py)
+- Real-time synthetic load testing engine simulating 10,000 to 80,000 concurrent cameras:
+  - Computes throughput (Gbps), packet loss (<0.01%), latency percentiles (p50, p95, p99), Kafka queue lag, GPU/CPU utilization %.
+  - Generates downloadable compliance benchmark reports.
+
+#### [NEW] [`vms_model4_router.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/vms_model4_router.py)
+- RESTful API router exposing all Model 4 endpoints under `/api/vms/*`:
+  - `/api/vms/overview`: State-wide KPIs, ingestion health, storage tier distribution, active AI alarms.
+  - `/api/vms/cameras`: Multi-department camera catalogue with RTSP, HLS proxy, WebRTC URLs.
+  - `/api/vms/playback/{cam_id}`: Time-indexed video chunks, bookmarks, timeline scrubber metadata.
+  - `/api/vms/storage/metrics` & `/api/vms/storage/calculate`: Tiered storage stats, Ceph/S3 browser, 80k sizing calculator.
+  - `/api/vms/ai/anpr`, `/api/vms/ai/face-recognition`, `/api/vms/ai/crowd-density`, `/api/vms/ai/anomalies`: Multi-task AI feeds.
+  - `/api/vms/integrations/vahan`, `/api/vms/integrations/sarthi`, `/api/vms/integrations/egujcop`, `/api/vms/integrations/nafis`: Government DB query & sync endpoints.
+  - `/api/vms/scalability/80k-model` & `/api/vms/scalability/load-test`: Scalability architecture and live load test generator.
+  - `/api/vms/dr/status` & `/api/vms/dr/failover-drill`: SDC/DRS dual-datacenter replication & failover simulator.
+  - `/api/vms/security/audit`: RBAC matrix, encryption telemetry, tamper-proof video export chain of custody.
+
+#### [MODIFY] [`sentinel_client.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/sentinel_client.py)
+- Update default Sentinel sandbox password to `8SNR-B7W4-QR4X` with multi-credential fallback and robust session management.
+
+#### [MODIFY] [`main.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/main.py)
+- Register `vms_model4_router`, initialize `vms_model4_db`, start multi-task AI background workers.
+
+#### [NEW] [`test_model4.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/test_model4.py)
+- Automated end-to-end integration test suite verifying all Model 4 endpoints and workflows.
+
+---
+
+### 2. Frontend: React 18 + TypeScript + Tailwind CSS (`apps/registry-web`)
+
+#### [NEW] [`shared/types/vms-model4.contract.ts`](file:///c:/Users/dassh/Project/Model-1/shared/types/vms-model4.contract.ts) & [`model4.types.ts`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/types/model4.types.ts)
+- Standardized TypeScript data contracts for Central VMS, Storage, Multi-Task AI, Integrations, Scalability, DR, and Security.
+
+#### [NEW] [`model4Service.ts`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/services/model4Service.ts)
+- Centralized frontend client service communicating with `/api/vms/*` with live reactive pub/sub, polling, and fallback mode.
+
+#### [NEW / MODIFY] Model 4 Command Center Pages in [`apps/registry-web/src/pages/vms/`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/):
+1. [`VmsLandingPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/VmsLandingPage.tsx): Executive Central VMS Dashboard with statewide KPIs, 80k readiness meter, active alarm carousel, and quick module launchers.
+2. [`LiveVideoWallPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/LiveVideoWallPage.tsx): High-performance multi-feed monitoring grid (1x1, 2x2, 3x3, 4x4), PTZ controls, snapshot capture, full-screen mode, bitrate/FPS telemetry, audio controls.
+3. [`TimelinePlaybackPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/TimelinePlaybackPage.tsx): Synchronized multi-feed recording playback, hot-buffer timeline scrubber, bookmark markers, speed control (0.5x to 8x), and SHA-256 evidentiary export.
+4. [`AiAnalyticsSuitePage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/AiAnalyticsSuitePage.tsx): Unified multi-task AI interface with 4 dedicated tabs (ANPR, Facial Recognition, Crowd Density Heatmaps, Anomaly & Threat Detection).
+5. [`VehicleTrackingPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/VehicleTrackingPage.tsx): Statewide vehicle trajectory reconstructor with interactive Leaflet GIS map, checkpoint timeline, speed-over-distance, escape vector projection, and sequential video replay.
+6. [`IntegrationHubPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/IntegrationHubPage.tsx): Authorised Government Database Integrations Hub (VAHAN, SARTHI, eGujCop, AFIS/NAFIS, CCTNS) with live query builder and sync status telemetry.
+7. [`StorageTierPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/StorageTierPage.tsx): Hot/Warm/Cold Storage Tier Manager, Ceph/S3 Object Storage Explorer, and 80k Camera Capacity Calculator.
+8. [`ScalabilityLoadLabPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/ScalabilityLoadLabPage.tsx): 80,000 Camera Scalability & Load Testing Lab with live synthetic load test runner, network/compute sizing, and PDF/CSV report export.
+9. [`DisasterRecoveryPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/DisasterRecoveryPage.tsx): High Availability & Disaster Recovery Hub (SDC Gandhinagar + DRS Ahmedabad active-active replication, RPO/RTO metrics, 1-click failover drill simulator).
+10. [`SecurityArchitecturePage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/vms/SecurityArchitecturePage.tsx): Zero-Trust Security, Encryption, Network Segmentation, and RBAC matrix.
+
+#### [MODIFY] [`routes/index.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/routes/index.tsx) & [`AppLayout.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/components/layout/AppLayout.tsx)
+- Update navigation header, routing table, and mobile drawer to feature Model 4 prominently with rich badges and intuitive section switching.
+
+---
+
+### 3. Documentation
+
+#### [NEW] [`MODEL_4_CENTRAL_VMS_ARCHITECTURE.md`](file:///c:/Users/dassh/Project/Model-1/MODEL_4_CENTRAL_VMS_ARCHITECTURE.md)
+- Complete, publication-ready technical architecture manual covering:
+  - System topology diagram.
+  - Streaming ingestion pipeline (RTSP over TCP, WebRTC WHEP, HLS, transcode).
+  - Storage architecture (Hot NVMe, Warm Ceph, Cold S3 WORM).
+  - Multi-task AI pipeline (ANPR, Face Recognition, Crowd Density, Anomaly Detection).
+  - Government database integration specifications (VAHAN, SARTHI, eGujCop, AFIS/NAFIS).
+  - 80,000 Camera scalability & load testing report.
+  - Disaster recovery (SDC/DRS) & Zero-Trust security governance.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+1. **Model 4 Backend Test Suite**:
+   ```powershell
+   cd services\analytics-service
+   python test_model4.py
+   ```
+   Validates:
+   - `/api/vms/overview` returns healthy KPIs.
+   - `/api/vms/cameras` returns all 30 cameras with valid URLs.
+   - `/api/vms/ai/*` returns ANPR, Face Recognition, Crowd Density, and Anomaly events.
+   - `/api/vms/integrations/*` handles VAHAN, SARTHI, eGujCop, and NAFIS queries.
+   - `/api/vms/storage/calculate` computes accurate storage needs for 80,000 cameras.
+   - `/api/vms/scalability/load-test` executes synthetic load test and computes throughput metrics.
+   - `/api/vms/dr/failover-drill` simulates failover without error.
+
+2. **Frontend Build & TypeScript Validation**:
+   ```powershell
+   cd apps\registry-web
+   npm run build
+   ```
+   Ensures type-safety and bundle production readiness.
+
+### Manual / Browser Verification
+- Launch both backend (`python main.py`) and frontend (`npm run dev`).
+- Verify Central VMS Command Center at `http://localhost:5173/vms`.
+- Test Live Video Wall grid switching (1x1, 2x2, 3x3, 4x4) and department filters.
+- Test Synchronized Timeline Playback and scrubber.
+- Test all 4 tabs of AI Analytics Suite (ANPR, Face Recognition, Crowd Density, Anomalies).
+- Test Vehicle Route Reconstruction search with `GJ01AB1234` and `GJ05CD5678`.
+- Test Government Database query builder (VAHAN, SARTHI, eGujCop, AFIS/NAFIS).
+- Test Storage Calculator and Ceph/S3 Browser.
+- Run 80,000 Camera Load Test Simulator and view live throughput/latency graphs.
+- Execute DR Failover Simulation and inspect the audit trail.

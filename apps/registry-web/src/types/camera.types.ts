@@ -88,6 +88,8 @@ export interface SentinelCamera {
   hls_live_url: string;
   hls_url?: string;
   // Enriched fields
+  latitude?: number;
+  longitude?: number;
   department?: string;
   district?: string;
   ai_active?: boolean;

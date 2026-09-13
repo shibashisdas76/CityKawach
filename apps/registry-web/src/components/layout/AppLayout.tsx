@@ -16,8 +16,10 @@ import {
   LogOut,
   Menu,
   X,
-  // VMS & Model 2 icons
+  // VMS & Model 4 icons
   MonitorPlay,
+  Film,
+  Sparkles,
   Car,
   Globe,
   Cpu,
@@ -25,112 +27,136 @@ import {
   HardDrive,
   Lock,
   AlertTriangle,
-  Radio
+  Radio,
+  Gauge,
+  RefreshCw,
+  Sliders,
+  ShieldAlert
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '@shared/types/cctv-metadata.contract';
 import { supabase } from '../../services/supabaseClient';
 
+const model4VmsNavItems = [
+  { name: 'VMS Overview', href: '/vms', icon: MonitorPlay },
+  { name: 'Live Wall', href: '/vms/live', icon: Video },
+  { name: 'Playback & Evidence', href: '/vms/playback', icon: Film },
+  { name: 'AI Vision Suite', href: '/vms/ai-suite', icon: Sparkles },
+  { name: 'Vehicle Tracking', href: '/vms/tracking', icon: Globe },
+  { name: 'Gov Integrations', href: '/vms/integrations', icon: Zap },
+  { name: 'Storage Tiers', href: '/vms/storage', icon: HardDrive },
+  { name: '80k Load Lab', href: '/vms/scalability', icon: Gauge },
+  { name: 'Disaster Recovery', href: '/vms/dr', icon: RefreshCw },
+  { name: 'Zero-Trust Security', href: '/vms/security', icon: Lock },
+];
+
+const federationNavItems = [
+  { name: 'Federation Hub', href: '/federation', icon: Layers },
+  { name: 'Cross-VMS Wall', href: '/federation/wall', icon: Video },
+  { name: 'Correlation', href: '/federation/correlation', icon: Zap },
+  { name: 'Incidents', href: '/federation/incidents', icon: ShieldAlert },
+  { name: 'Connectors', href: '/federation/connectors', icon: Sliders },
+  { name: 'Reports', href: '/federation/reports', icon: FileSpreadsheet },
+];
+
 const registryNavItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Camera Registry', href: '/cameras', icon: Video },
-  { name: 'Add Camera', href: '/cameras/new', icon: PlusCircle },
-  { name: 'Bulk Import', href: '/cameras/import', icon: Upload },
+  { name: 'Registry Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Camera Inventory', href: '/cameras', icon: Video },
   { name: 'GIS Map', href: '/map', icon: MapPin },
   { name: 'Health Telemetry', href: '/health', icon: Activity },
   { name: 'Gap Intelligence', href: '/gap-analysis', icon: Layers },
-  { name: 'Departments', href: '/departments', icon: Building2 },
-  { name: 'Reports', href: '/reports', icon: FileSpreadsheet },
   { name: 'Audit Logs', href: '/audit-logs', icon: ShieldCheck },
 ];
 
-const vmsNavItems = [
-  { name: 'VMS Overview', href: '/vms', icon: MonitorPlay },
-  { name: 'Live Video Wall', href: '/vms/live', icon: Video },
-  { name: 'ANPR Engine', href: '/vms/anpr', icon: Car },
-  { name: 'Vehicle Tracking', href: '/vms/tracking', icon: Globe },
-  { name: 'Alerts Hub', href: '/vms/alerts', icon: AlertTriangle },
-  { name: 'Analytics Engine', href: '/vms/analytics', icon: Cpu },
-  { name: 'Integration Hub', href: '/vms/integrations', icon: Zap },
-  { name: 'Storage Tiers', href: '/vms/storage', icon: HardDrive },
-  { name: 'Security', href: '/vms/security', icon: Lock },
-];
-
-const allNavigationItems = [...registryNavItems, ...vmsNavItems];
+const allNavigationItems = [...model4VmsNavItems, ...federationNavItems, ...registryNavItems];
 
 export const AppLayout: React.FC = () => {
-  const { currentUser, setRole } = useAuth();
+  const { currentUser, setRole, logout } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      navigate('/login');
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
+
+  if (!currentUser) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FBFF] font-sans antialiased text-slate-900 selection:bg-blue-600 selection:text-white">
       {/* Top Navbar Header */}
-      <header className="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 border-b border-blue-800/80 shadow-lg sticky top-0 z-40 text-white">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-950 border-b border-cyan-800/60 shadow-xl sticky top-0 z-40 text-white">
+        <div className="max-w-[1760px] mx-auto px-3 sm:px-5 lg:px-6">
           <div className="flex items-center justify-between h-16">
             
             {/* Left: Brand Logo & Title */}
-            <div className="flex items-center space-x-3 shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center font-extrabold text-white shadow-md shadow-cyan-500/20 text-base">
-                G
+            <NavLink to="/vms" className="flex items-center space-x-3 shrink-0 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center font-black text-white shadow-lg shadow-cyan-500/25 text-lg group-hover:scale-105 transition-transform">
+                V4
               </div>
-              <div className="hidden sm:block">
-                <h1 className="text-sm font-extrabold tracking-tight text-white uppercase">STATE CCTV PLATFORM</h1>
-                <p className="text-[10px] text-cyan-400 font-mono tracking-tight font-bold">MODEL 1 + MODEL 2 UNIFIED COMMAND</p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-sm font-black tracking-tight text-white uppercase flex items-center gap-1.5">
+                    CENTRAL VMS PLATFORM
+                  </h1>
+                  <span className="text-[9px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 px-1.5 py-0.5 rounded">
+                    MODEL 4
+                  </span>
+                </div>
+                <p className="text-[10px] text-cyan-400 font-mono tracking-tight font-bold">STATEWIDE CONSOLIDATED CCTV COMMAND</p>
               </div>
-            </div>
+            </NavLink>
 
             {/* Center: Desktop Navigation Bar */}
-            <nav className="hidden xl:flex items-center gap-1 overflow-x-auto py-2">
-              {/* Registry Section */}
-              {registryNavItems.map((item) => (
+            <nav className="hidden 2xl:flex items-center gap-1 overflow-x-auto py-1">
+              {/* Model 4 Central VMS Navigation */}
+              <div className="flex items-center bg-cyan-950/50 p-1 rounded-xl border border-cyan-600/40 shadow-inner">
+                {model4VmsNavItems.map((item) => (
+                  <NavLink
+                    key={item.name}
+                    to={item.href}
+                    end={item.href === '/vms'}
+                    className={({ isActive }) =>
+                      `flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap ${
+                        isActive
+                          ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold shadow-md shadow-cyan-500/30 border border-cyan-300/40'
+                          : 'text-cyan-200 hover:bg-cyan-900/40 hover:text-white'
+                      }`
+                    }
+                  >
+                    <item.icon className="w-3.5 h-3.5 shrink-0" />
+                    <span>{item.name}</span>
+                  </NavLink>
+                ))}
+              </div>
+
+              {/* Quick Links: M3 Federation & M1 Registry */}
+              <div className="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-700/60 ml-2">
                 <NavLink
-                  key={item.name}
-                  to={item.href}
+                  to="/federation"
                   className={({ isActive }) =>
-                    `flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap ${
-                      isActive
-                        ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/25 border border-blue-400/40'
-                        : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                    `flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      isActive ? 'bg-purple-600 text-white font-bold' : 'text-purple-300 hover:bg-purple-950/60 hover:text-white'
                     }`
                   }
                 >
-                  <item.icon className="w-4 h-4 shrink-0" />
-                  <span>{item.name}</span>
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>M3 Federation</span>
                 </NavLink>
-              ))}
-              {/* VMS divider */}
-              <div className="w-px h-5 bg-blue-700/60 mx-1 shrink-0" />
-              <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest whitespace-nowrap shrink-0">M2/M4</span>
-              {/* VMS Section */}
-              {vmsNavItems.map((item) => (
                 <NavLink
-                  key={item.name}
-                  to={item.href}
-                  end={item.href === '/vms'}
+                  to="/dashboard"
                   className={({ isActive }) =>
-                    `flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap ${
-                      isActive
-                        ? 'bg-cyan-600 text-white font-bold shadow-md shadow-cyan-500/25 border border-cyan-400/40'
-                        : 'text-cyan-200 hover:bg-cyan-900/30 hover:text-cyan-100'
+                    `flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      isActive ? 'bg-blue-600 text-white font-bold' : 'text-blue-300 hover:bg-blue-950/60 hover:text-white'
                     }`
                   }
                 >
-                  <item.icon className="w-4 h-4 shrink-0" />
-                  <span>{item.name}</span>
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span>M1 Registry</span>
                 </NavLink>
-              ))}
+              </div>
             </nav>
 
             {/* Right: Actions & User Tools */}
@@ -174,7 +200,7 @@ export const AppLayout: React.FC = () => {
               {/* Mobile Hamburger Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="xl:hidden p-2 text-slate-200 hover:text-white hover:bg-blue-900/60 rounded-lg transition"
+                className="2xl:hidden p-2 text-slate-200 hover:text-white hover:bg-blue-900/60 rounded-lg transition"
                 aria-label="Toggle Navigation Menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -183,17 +209,18 @@ export const AppLayout: React.FC = () => {
 
           </div>
 
-          {/* Sub-navbar links for medium screens (between lg and xl) */}
-          <div className="hidden lg:flex xl:hidden border-t border-blue-800/60 py-2 space-x-1 overflow-x-auto">
-            {allNavigationItems.map((item) => (
+          {/* Sub-navbar links for medium/large screens (below 2xl) */}
+          <div className="hidden xl:flex 2xl:hidden border-t border-cyan-800/50 py-2 space-x-1 overflow-x-auto">
+            {model4VmsNavItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.href}
+                end={item.href === '/vms'}
                 className={({ isActive }) =>
                   `flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/25 border border-blue-400/40'
-                      : 'text-slate-200 hover:bg-white/10 hover:text-white'
+                      ? 'bg-cyan-600 text-white font-bold shadow-md shadow-cyan-500/25 border border-cyan-400/40'
+                      : 'text-cyan-200 hover:bg-cyan-900/40 hover:text-white'
                   }`
                 }
               >
@@ -201,14 +228,29 @@ export const AppLayout: React.FC = () => {
                 <span>{item.name}</span>
               </NavLink>
             ))}
+            <div className="h-6 w-px bg-cyan-700/50 mx-1 self-center" />
+            <NavLink
+              to="/federation"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-purple-300 hover:bg-purple-900/40 whitespace-nowrap"
+            >
+              <Layers className="w-3.5 h-3.5 shrink-0" />
+              <span>M3 Federation</span>
+            </NavLink>
+            <NavLink
+              to="/dashboard"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-blue-300 hover:bg-blue-900/40 whitespace-nowrap"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 shrink-0" />
+              <span>M1 Registry</span>
+            </NavLink>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="xl:hidden bg-blue-950 border-b border-blue-900 px-4 py-3 space-y-1 shadow-lg text-white">
-            <div className="flex items-center justify-between pb-2 border-b border-blue-800 mb-2">
-              <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider font-mono">Navigation Menu</span>
+          <div className="2xl:hidden bg-slate-950 border-b border-cyan-800 px-4 py-3 space-y-1 shadow-2xl text-white max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-2 border-b border-cyan-800/80 mb-2">
+              <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider font-mono">MODEL 4 CENTRAL VMS</span>
               <div className="flex items-center space-x-1.5 bg-blue-900/80 px-2.5 py-1 rounded-lg border border-blue-700">
                 <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
                 <select
@@ -224,16 +266,53 @@ export const AppLayout: React.FC = () => {
                 </select>
               </div>
             </div>
-            {allNavigationItems.map((item) => (
+            <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider px-2 pt-1 font-mono">Central VMS Operations</div>
+            {model4VmsNavItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  `flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-cyan-600 text-white font-bold shadow-md'
+                      : 'text-slate-200 hover:bg-cyan-900/40 hover:text-white'
+                  }`
+                }
+              >
+                <item.icon className="w-4 h-4 shrink-0" />
+                <span>{item.name}</span>
+              </NavLink>
+            ))}
+            <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider px-2 pt-3 font-mono border-t border-slate-800 mt-2">M3 Multi-Vendor Federation</div>
+            {federationNavItems.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-purple-600 text-white font-bold shadow-md'
+                      : 'text-purple-200 hover:bg-purple-900/40 hover:text-white'
+                  }`
+                }
+              >
+                <item.icon className="w-4 h-4 shrink-0" />
+                <span>{item.name}</span>
+              </NavLink>
+            ))}
+            <div className="text-[10px] font-bold text-blue-400 uppercase tracking-wider px-2 pt-3 font-mono border-t border-slate-800 mt-2">M1 State Camera Registry</div>
+            {registryNavItems.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                     isActive
                       ? 'bg-blue-600 text-white font-bold shadow-md'
-                      : 'text-slate-200 hover:bg-blue-900 hover:text-white'
+                      : 'text-blue-200 hover:bg-blue-900/40 hover:text-white'
                   }`
                 }
               >

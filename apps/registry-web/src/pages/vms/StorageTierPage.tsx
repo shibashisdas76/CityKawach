@@ -1,189 +1,287 @@
-import React from 'react';
-import { vmsService } from '../../services/vmsService';
-import { StorageTier } from '../../types/camera.types';
-import { HardDrive, Flame, Snowflake, Wind, Clock, Server } from 'lucide-react';
-
-const TIER_CONFIG = {
-  HOT: { icon: Flame, color: 'text-red-400', bg: 'from-red-950 to-orange-950 border-red-700/40', barColor: '#EF4444' },
-  WARM: { icon: Wind, color: 'text-amber-400', bg: 'from-amber-950 to-yellow-950 border-amber-700/40', barColor: '#F59E0B' },
-  COLD: { icon: Snowflake, color: 'text-blue-400', bg: 'from-blue-950 to-slate-950 border-blue-700/40', barColor: '#3B82F6' },
-};
-
-function formatTB(tb: number): string {
-  if (tb >= 1000) return `${(tb / 1000).toFixed(1)} PB`;
-  return `${tb.toLocaleString()} TB`;
-}
-
-function calcBitrate(cameras: number, avgBitrateKbps = 2000): string {
-  const totalGbps = (cameras * avgBitrateKbps) / 1e6;
-  return `${totalGbps.toFixed(0)} Gbps`;
-}
+import React, { useState, useEffect } from 'react';
+import {
+  HardDrive,
+  Flame,
+  Snowflake,
+  Wind,
+  Clock,
+  Server,
+  Calculator,
+  Database,
+  Layers,
+  ShieldCheck,
+  Download,
+  RotateCcw,
+  Play
+} from 'lucide-react';
+import { model4Service } from '../../services/model4Service';
+import { StorageTierSpec } from '../../types/model4.types';
 
 export const StorageTierPage: React.FC = () => {
-  const tiers = vmsService.getStorageTiers();
-  const scalability = vmsService.getScalabilityStats();
-  const totalCapacity = tiers.reduce((s, t) => s + t.capacityTB, 0);
-  const totalUsed = tiers.reduce((s, t) => s + t.usedTB, 0);
+  const [storageData, setStorageData] = useState<{ storage_architecture: string; tiers: StorageTierSpec[] } | null>(null);
+  
+  // Sizing Calculator state
+  const [calcCams, setCalcCams] = useState<number>(80000);
+  const [calcH264Pct, setCalcH264Pct] = useState<number>(70);
+  const [calcHotDays, setCalcHotDays] = useState<number>(7);
+  const [calcWarmDays, setCalcWarmDays] = useState<number>(30);
+  const [calcColdDays, setCalcColdDays] = useState<number>(365);
+  const [calcResult, setCalcResult] = useState<any>(null);
 
-  // Simulate per-department retention
-  const deptRetention = [
-    { dept: 'Traffic Police', hot: 7, warm: 30, cold: 180 },
-    { dept: 'Municipal Corp', hot: 7, warm: 45, cold: 90 },
-    { dept: 'Transport Dept', hot: 14, warm: 60, cold: 365 },
-    { dept: 'State HQ', hot: 30, warm: 90, cold: 730 },
-    { dept: 'Rural Police', hot: 7, warm: 30, cold: 90 },
-    { dept: 'Port Authority', hot: 14, warm: 60, cold: 365 },
-  ];
+  const loadData = async () => {
+    const data = await model4Service.getStorageMetrics();
+    setStorageData(data);
+    runCalculator(calcCams, calcH264Pct, calcHotDays, calcWarmDays, calcColdDays);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const runCalculator = async (cams: number, h264: number, hot: number, warm: number, cold: number) => {
+    const res = await model4Service.calculateStorage({
+      camera_count: cams,
+      h264_pct: h264,
+      days_hot: hot,
+      days_warm: warm,
+      days_cold: cold
+    });
+    setCalcResult(res);
+  };
+
+  const handleRecalculate = () => {
+    runCalculator(calcCams, calcH264Pct, calcHotDays, calcWarmDays, calcColdDays);
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 border border-slate-600/60">
-        <div className="flex items-center gap-3 mb-2">
-          <HardDrive className="w-5 h-5 text-slate-300" />
-          <h2 className="text-lg font-black text-white">Storage Architecture</h2>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 rounded-2xl p-6 border border-amber-800/40 text-white shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="px-2.5 py-0.5 bg-amber-500/30 text-amber-300 font-mono text-xs font-bold rounded-md border border-amber-500/40 uppercase">
+              MODEL 4 TIERED STORAGE
+            </span>
+            <span className="text-xs text-slate-400 font-mono">HOT (NVME) · WARM (CEPH) · COLD (S3 WORM)</span>
+          </div>
+          <h1 className="text-2xl font-black tracking-tight text-white">
+            Distributed Tiered Storage & S3 Archive Architecture
+          </h1>
+          <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+            Multi-tier distributed object storage architecture powered by Ceph BlueStore and immutable AWS S3 Glacier WORM
+            compliance. Includes real-time capacity monitoring and 80,000 camera retention sizing calculator.
+          </p>
         </div>
-        <p className="text-xs text-slate-400">
-          Tiered storage design for scalable video retention across the statewide VMS platform
-        </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-          {[
-            { label: 'Total Capacity', value: formatTB(totalCapacity) },
-            { label: 'Currently Used', value: formatTB(totalUsed) },
-            { label: 'Utilization', value: `${Math.round((totalUsed / totalCapacity) * 100)}%` },
-            { label: 'Daily Ingestion', value: `${scalability.storagePerDayTB} TB` },
-          ].map(item => (
-            <div key={item.label} className="bg-slate-800/60 rounded-xl p-3 text-center">
-              <p className="text-lg font-black text-white">{item.value}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">{item.label}</p>
-            </div>
-          ))}
+
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="bg-amber-500/20 border border-amber-500/40 px-3.5 py-2 rounded-xl text-xs font-mono font-bold text-amber-300">
+            TOTAL POOL: 16.45 PB
+          </div>
         </div>
       </div>
 
-      {/* Tier Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {tiers.map(tier => {
-          const cfg = TIER_CONFIG[tier.name];
-          const Icon = cfg.icon;
-          const usagePct = Math.round((tier.usedTB / tier.capacityTB) * 100);
-
+      {/* Tier Specification Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {storageData?.tiers.map(tier => {
+          const isHot = tier.tier === 'HOT';
+          const isWarm = tier.tier === 'WARM';
           return (
-            <div key={tier.name} className={`bg-gradient-to-br ${cfg.bg} border rounded-2xl p-5 space-y-4`}>
+            <div
+              key={tier.tier}
+              className={`bg-white rounded-2xl p-6 border shadow-sm space-y-4 ${
+                isHot ? 'border-red-200' : isWarm ? 'border-amber-200' : 'border-blue-200'
+              }`}
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Icon className={`w-5 h-5 ${cfg.color}`} />
-                  <span className="text-base font-black text-white">{tier.name}</span>
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center text-white ${
+                      isHot ? 'bg-red-600' : isWarm ? 'bg-amber-600' : 'bg-blue-600'
+                    }`}
+                  >
+                    {isHot ? <Flame className="w-5 h-5" /> : isWarm ? <Wind className="w-5 h-5" /> : <Snowflake className="w-5 h-5" />}
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">{tier.tier} TIER</h3>
+                    <p className="text-[10px] text-slate-400 font-mono">{tier.retention_period}</p>
+                  </div>
                 </div>
-                <span className="text-xs font-bold text-slate-400">{tier.retentionDays}d retention</span>
+                <span className="text-xs font-bold font-mono text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">
+                  {tier.usage_pct}% Used
+                </span>
               </div>
 
-              {/* Capacity bar */}
-              <div>
-                <div className="flex justify-between text-xs mb-1.5">
-                  <span className="text-slate-400">Capacity</span>
-                  <span className="font-bold text-white">{usagePct}% used</span>
-                </div>
-                <div className="h-2.5 bg-slate-900/60 rounded-full overflow-hidden">
+              <div className="space-y-1.5">
+                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full transition-all duration-1000"
-                    style={{ width: `${usagePct}%`, backgroundColor: cfg.barColor }}
+                    className={`h-full rounded-full transition-all ${
+                      isHot ? 'bg-red-500' : isWarm ? 'bg-amber-500' : 'bg-blue-500'
+                    }`}
+                    style={{ width: `${tier.usage_pct}%` }}
                   />
                 </div>
-                <div className="flex justify-between text-[10px] text-slate-500 mt-1">
-                  <span>{formatTB(tier.usedTB)} used</span>
-                  <span>{formatTB(tier.capacityTB)} total</span>
+                <div className="flex justify-between text-[11px] font-mono text-slate-500">
+                  <span>Used: <b>{tier.used_capacity_tb} TB</b></span>
+                  <span>Total: <b>{tier.total_capacity_tb} TB</b></span>
                 </div>
               </div>
 
-              {/* Specs */}
-              <div className="space-y-2 text-xs">
-                {[
-                  { label: 'Technology', value: tier.technology },
-                  { label: 'Access Latency', value: tier.accessLatency },
-                  { label: 'Cost', value: `₹${(tier.costPerTBMonth * 85).toFixed(0)}/TB/month` },
-                  { label: 'Cameras', value: `${tier.cameras.toLocaleString()}` },
-                ].map(row => (
-                  <div key={row.label} className="flex justify-between border-b border-white/5 pb-1.5">
-                    <span className="text-slate-400">{row.label}</span>
-                    <span className="text-slate-200 font-medium text-right max-w-[60%] text-[11px]">{row.value}</span>
-                  </div>
-                ))}
+              <div className="space-y-2 pt-2 border-t border-slate-100 text-xs font-mono">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Technology:</span>
+                  <span className="text-slate-800 font-bold text-right truncate max-w-[160px]">{tier.technology}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Chunk Count:</span>
+                  <span className="text-slate-800 font-bold">{tier.chunk_count.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Encryption:</span>
+                  <span className="text-emerald-700 font-bold">{tier.encryption}</span>
+                </div>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* 80K Camera Load Simulation */}
-      <div className="bg-slate-900 rounded-2xl border border-slate-700/60 p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <Server className="w-4 h-4 text-blue-400" />
-          <h3 className="text-sm font-bold text-white">Scalability — 80,000 Camera Load Estimate</h3>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: 'Peak Ingest', value: calcBitrate(80000), sub: '@ 2 Mbps avg per camera' },
-            { label: 'Daily Storage', value: `${scalability.storagePerDayTB} TB`, sub: 'before compression' },
-            { label: 'Annual Storage', value: formatTB(scalability.storagePerDayTB * 365), sub: 'raw (180d cold)' },
-            { label: 'GPU Inference', value: `${scalability.gpuNodes} nodes`, sub: 'NVIDIA A100/H100' },
-          ].map(item => (
-            <div key={item.label} className="bg-slate-800/60 rounded-xl p-3">
-              <p className="text-sm font-black text-blue-400">{item.value}</p>
-              <p className="text-xs font-bold text-white mt-1">{item.label}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">{item.sub}</p>
-            </div>
-          ))}
+      {/* Interactive Sizing Calculator */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div>
+            <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-amber-600" />
+              Statewide Camera Retention & Capacity Sizing Calculator
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Calculate exact network throughput and multi-tier storage demands for custom deployment parameters
+            </p>
+          </div>
+
+          <button
+            onClick={handleRecalculate}
+            className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Recalculate
+          </button>
         </div>
 
-        {/* Tech stack */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-          {[
-            { layer: 'Object Storage', tech: 'Ceph / S3-compatible distributed' },
-            { layer: 'Stream Broker', tech: 'Apache Kafka (2,400 partitions)' },
-            { layer: 'AI Inference', tech: 'NVIDIA DeepStream + Triton' },
-            { layer: 'Database', tech: 'PostgreSQL + TimescaleDB' },
-            { layer: 'Orchestration', tech: 'Kubernetes (K8s) 3,200+ pods' },
-            { layer: 'Network', tech: 'GSWAN + 100Gbps backbone' },
-          ].map(row => (
-            <div key={row.layer} className="bg-slate-800/40 rounded-xl p-3">
-              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{row.layer}</p>
-              <p className="text-slate-200 font-semibold mt-1">{row.tech}</p>
+        {/* Sliders Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold text-slate-700">
+              <span>Cameras:</span>
+              <b className="text-amber-600 font-mono">{calcCams.toLocaleString()}</b>
             </div>
-          ))}
-        </div>
-      </div>
+            <input
+              type="range"
+              min="1000"
+              max="100000"
+              step="1000"
+              value={calcCams}
+              onChange={e => {
+                const val = Number(e.target.value);
+                setCalcCams(val);
+                runCalculator(val, calcH264Pct, calcHotDays, calcWarmDays, calcColdDays);
+              }}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+            />
+          </div>
 
-      {/* Retention policy matrix */}
-      <div className="bg-slate-900 rounded-2xl border border-slate-700/60 overflow-hidden">
-        <div className="p-4 border-b border-slate-700/60">
-          <h3 className="text-sm font-bold text-white">Retention Policy Matrix</h3>
-          <p className="text-xs text-slate-400 mt-0.5">Configurable per-department data retention lifecycle</p>
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold text-slate-700">
+              <span>H.264 vs H.265 Ratio:</span>
+              <b className="text-amber-600 font-mono">{calcH264Pct}% H.264</b>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="5"
+              value={calcH264Pct}
+              onChange={e => {
+                const val = Number(e.target.value);
+                setCalcH264Pct(val);
+                runCalculator(calcCams, val, calcHotDays, calcWarmDays, calcColdDays);
+              }}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold text-slate-700">
+              <span>Hot Retention (NVMe):</span>
+              <b className="text-red-600 font-mono">{calcHotDays} Days</b>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="30"
+              value={calcHotDays}
+              onChange={e => {
+                const val = Number(e.target.value);
+                setCalcHotDays(val);
+                runCalculator(calcCams, calcH264Pct, val, calcWarmDays, calcColdDays);
+              }}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-red-600"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold text-slate-700">
+              <span>Cold Retention (S3 WORM):</span>
+              <b className="text-blue-600 font-mono">{calcColdDays} Days</b>
+            </div>
+            <input
+              type="range"
+              min="30"
+              max="730"
+              step="30"
+              value={calcColdDays}
+              onChange={e => {
+                const val = Number(e.target.value);
+                setCalcColdDays(val);
+                runCalculator(calcCams, calcH264Pct, calcHotDays, calcWarmDays, val);
+              }}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            />
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-slate-800/60">
-                <th className="text-left px-4 py-2.5 text-slate-400 font-semibold">Department</th>
-                <th className="text-center px-4 py-2.5 text-red-400 font-semibold">🔥 Hot (days)</th>
-                <th className="text-center px-4 py-2.5 text-amber-400 font-semibold">🌤 Warm (days)</th>
-                <th className="text-center px-4 py-2.5 text-blue-400 font-semibold">❄️ Cold (days)</th>
-                <th className="text-center px-4 py-2.5 text-slate-400 font-semibold">Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800">
-              {deptRetention.map(row => (
-                <tr key={row.dept} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-4 py-2.5 text-slate-200 font-semibold">{row.dept}</td>
-                  <td className="px-4 py-2.5 text-center text-red-300 font-mono">{row.hot}</td>
-                  <td className="px-4 py-2.5 text-center text-amber-300 font-mono">{row.warm}</td>
-                  <td className="px-4 py-2.5 text-center text-blue-300 font-mono">{row.cold}</td>
-                  <td className="px-4 py-2.5 text-center text-slate-300 font-bold font-mono">{row.hot + row.warm + row.cold}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+
+        {/* Sizing Output Cards */}
+        {calcResult && (
+          <div className="bg-slate-900 rounded-2xl p-5 text-white grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Ingest Bandwidth</span>
+              <p className="text-lg font-black text-cyan-400 mt-1">{calcResult.bandwidth_gbps} Gbps</p>
+            </div>
+
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Daily Ingest</span>
+              <p className="text-lg font-black text-white mt-1">{calcResult.daily_ingest_tb} TB/day</p>
+            </div>
+
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Hot Tier Pool</span>
+              <p className="text-lg font-black text-red-400 mt-1">{calcResult.hot_tier_tb} TB</p>
+            </div>
+
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Warm Tier Pool</span>
+              <p className="text-lg font-black text-amber-400 mt-1">{calcResult.warm_tier_tb} TB</p>
+            </div>
+
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Cold Archive</span>
+              <p className="text-lg font-black text-blue-400 mt-1">{(calcResult.cold_tier_tb / 1024).toFixed(1)} PB</p>
+            </div>
+
+            <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Total Storage</span>
+              <p className="text-lg font-black text-emerald-400 mt-1">{calcResult.total_storage_pb} PB</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

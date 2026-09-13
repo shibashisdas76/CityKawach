@@ -1,0 +1,115 @@
+# Implementation Plan: Senior Software Audit Fixes & Multi-Model Platform Alignment
+
+This plan addresses all critical blockers, architectural defects, and production gaps identified in the Senior Software Audit for the Sentinel Gujarat CCTV Central Platform (covering Model 1, Model 2, Model 3, and Model 4).
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Authentication Flow**: Route guards will now protect all `/vms`, `/cameras`, `/map`, and `/federation` routes. The default route redirects unauthenticated users to `/login`. Preconfigured official credentials (e.g., `superadmin@gujarat.gov.in` / `admin123` for State Admin and `ahmedabad.police@gujarat.gov.in` / `police123` for Department Admin) will be documented and functional.
+> - **OCR & Python Dependencies**: We will integrate EasyOCR with fallback to a lightweight OpenCV-based OCR pipeline for plate character segmentation, ensuring ANPR operates seamlessly on both GPU/CPU environments.
+> - **Database Compatibility**: Database connections will support standard PostgreSQL (`DATABASE_URL`) with automated SQLite fallback.
+
+---
+
+## Proposed Changes
+
+### 1. Authentication, RBAC & Route Protection
+**Files:**
+- [MODIFY] [`AuthContext.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/context/AuthContext.tsx)
+  - Replace hardcoded static user with stateful authentication: session persistence in `localStorage`, login/logout functions, department and role switching.
+- [NEW] [`ProtectedRoute.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/components/auth/ProtectedRoute.tsx)
+  - Create a route wrapper that checks authentication and authorized roles, redirecting unauthenticated users to `/login`.
+- [MODIFY] [`LoginPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/auth/LoginPage.tsx)
+  - Wire up authentication logic to call `login()` in `AuthContext`, handling both State Admin and Department roles with pre-filled demo quick-access buttons.
+- [MODIFY] [`routes/index.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/routes/index.tsx)
+  - Wrap all protected application routes with `<ProtectedRoute>`.
+
+---
+
+### 2. Model 1: Central Registry & GIS Enhancements
+**Files:**
+- [MODIFY] [`main.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/main.py)
+  - Add comprehensive Model 1 REST API endpoints with Swagger tags:
+    - `GET /api/registry/cameras`, `POST /api/registry/cameras`, `PUT /api/registry/cameras/{id}`, `DELETE /api/registry/cameras/{id}`
+    - `GET /api/registry/departments`
+    - `GET /api/registry/coverage-zones`, `POST /api/registry/coverage-zones/recalculate`
+    - `GET /api/registry/audit-logs`
+- [MODIFY] [`apiService.ts`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/services/apiService.ts)
+  - Connect `apiService` to call FastAPI backend registry endpoints with automatic fallback to local memory state if backend is offline.
+- [MODIFY] [`GisMapPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/gis/GisMapPage.tsx)
+  - Replace arithmetic coordinate formulas with real Gujarat geospatial coordinates (Junagadh, Navsari, Ahmedabad, Gandhinagar, Surat, Rajkot, Bilimora, etc.) sourced from location enrichment.
+- [MODIFY] [`GapAnalysisPage.tsx`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/pages/gis/GapAnalysisPage.tsx)
+  - Add downloadable Gap Analysis Report generation (PDF/JSON/CSV) with VDI calculations.
+
+---
+
+### 3. Model 2 & Video Ingestion (AES-128 Decryption & Real OCR)
+**Files:**
+- [MODIFY] [`worker.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/worker.py)
+  - Fix RFC 8216 AES-128-CBC IV bug: extract the segment sequence number and construct the proper 16-byte big-endian IV (`seq_num.to_bytes(16, byteorder='big')`).
+  - Refactor single-threaded sweep to use `ThreadPoolExecutor` for parallel multi-camera stream processing.
+- [MODIFY] [`anpr_engine.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/anpr_engine.py)
+  - Implement real optical plate character recognition on cropped vehicle bounding boxes using EasyOCR/OpenCV thresholding and morphology, extracting character text and validating against Indian vehicle plate formats.
+- [MODIFY] [`requirements.txt`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/requirements.txt)
+  - Add `easyocr`, `psycopg2-binary`, `reportlab` if needed.
+
+---
+
+### 4. Model 3: Federation Middleware & Bus Integration
+**Files:**
+- [MODIFY] [`federationService.ts`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/services/federationService.ts)
+  - Ensure dynamic API URL via `import.meta.env.VITE_API_BASE_URL`.
+  - Validate all multi-vendor adapters (Hikvision, Genetec, Dahua, Milestone, Hanwha) and CEP sliding window endpoints.
+
+---
+
+### 5. Model 4: Central VMS Platform & Integrations
+**Files:**
+- [MODIFY] [`vmsService.ts`](file:///c:/Users/dassh/Project/Model-1/apps/registry-web/src/services/vmsService.ts)
+  - Ensure dynamic API URL via `import.meta.env.VITE_API_BASE_URL`.
+  - Provide realistic location coordinates in `normalizeCamera` for GIS alignment.
+  - Clearly delineate sandbox integration indicators for VAHAN, SARTHI, eGujCop, NAFIS, and CCTNS.
+
+---
+
+### 6. Backend CORS, Security & Database Layer
+**Files:**
+- [MODIFY] [`main.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/main.py)
+  - Fix CORS configuration to adhere to the standard without invalid wildcard credentials combinations.
+- [MODIFY] [`database.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/database.py), [`federation_db.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/federation_db.py), [`vms_model4_db.py`](file:///c:/Users/dassh/Project/Model-1/services/analytics-service/vms_model4_db.py)
+  - Support PostgreSQL via `DATABASE_URL` with transparent SQLite fallback for development and self-contained execution.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Run TypeScript build/typecheck:
+  ```powershell
+  cd c:\Users\dassh\Project\Model-1\apps\registry-web
+  npm run typecheck
+  npm run build
+  ```
+- Run Python backend syntax & unit checks:
+  ```powershell
+  cd c:\Users\dassh\Project\Model-1\services\analytics-service
+  python -c "import main; print('FastAPI app imported successfully')"
+  python -c "import worker; import anpr_engine; print('Worker and ANPR engines verified')"
+  ```
+
+### Manual Verification
+1. **Authentication & Route Protection:**
+   - Open frontend without logging in -> verify redirected to `/login`.
+   - Log in as State Admin -> verify access to all models.
+   - Switch role to Operator / Department -> verify appropriate RBAC restrictions.
+2. **Model 1 Registry & GIS Map:**
+   - Verify camera markers appear at true locations across Gujarat (Junagadh, Navsari, Ahmedabad, etc.).
+   - Verify camera CRUD works and persists.
+   - Run Gap Analysis and verify PDF/CSV export.
+3. **Model 2 Live Streams & ANPR:**
+   - Test HLS playback on Video Wall.
+   - Check ANPR live detection feed and vehicle trajectory search.
+4. **Model 3 Federation Middleware:**
+   - Verify cross-VMS video wall, event correlation, and CEP incident generation.
+5. **Model 4 Central VMS:**
+   - Verify statewide vehicle tracking timeline, storage tier calculator, and DR failover drill.

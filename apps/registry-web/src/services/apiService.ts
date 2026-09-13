@@ -1,6 +1,7 @@
 import { Camera, CoverageZone, CriticalAlert } from '../types/camera.types';
 import { MOCK_CAMERAS, MOCK_DEPARTMENTS, MOCK_COVERAGE_ZONES, MOCK_AUDIT_LOGS, MOCK_HEALTH_LOGS } from './mockData';
-import { supabase } from './supabaseClient';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 type Listener = () => void;
 
@@ -36,9 +37,10 @@ class ApiService {
   ];
 
   private listeners: Set<Listener> = new Set();
+  private initialSyncDone = false;
 
   constructor() {
-    this.initRealtimeSupabase();
+    this.syncWithBackend();
   }
 
   // Subscribe to changes
@@ -51,30 +53,48 @@ class ApiService {
     this.listeners.forEach((fn) => fn());
   }
 
-  private async initRealtimeSupabase() {
+  public async syncWithBackend() {
     try {
-      const channel = supabase
-        .channel('schema-db-changes')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'cameras' },
-          (payload) => {
-            if (payload.eventType === 'INSERT') {
-              const newCam = payload.new as Camera;
-              if (!this.cameras.some((c) => c.id === newCam.id || c.camera_id === newCam.camera_id)) {
-                this.cameras.unshift(newCam);
-                this.notify();
-              }
-            }
-          }
-        )
-        .subscribe();
+      // 1. Fetch Cameras from Registry API
+      const camRes = await fetch(`${API_BASE_URL}/api/registry/cameras`);
+      if (camRes.ok) {
+        const remoteCams = await camRes.json();
+        if (Array.isArray(remoteCams) && remoteCams.length > 0) {
+          this.cameras = remoteCams;
+        }
+      }
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
+      // 2. Fetch Departments
+      const deptRes = await fetch(`${API_BASE_URL}/api/registry/departments`);
+      if (deptRes.ok) {
+        const remoteDepts = await deptRes.json();
+        if (Array.isArray(remoteDepts) && remoteDepts.length > 0) {
+          this.departments = remoteDepts;
+        }
+      }
+
+      // 3. Fetch Coverage Zones
+      const zoneRes = await fetch(`${API_BASE_URL}/api/registry/coverage-zones`);
+      if (zoneRes.ok) {
+        const remoteZones = await zoneRes.json();
+        if (Array.isArray(remoteZones) && remoteZones.length > 0) {
+          this.coverageZones = remoteZones;
+        }
+      }
+
+      // 4. Fetch Audit Logs
+      const auditRes = await fetch(`${API_BASE_URL}/api/registry/audit-logs`);
+      if (auditRes.ok) {
+        const remoteLogs = await auditRes.json();
+        if (Array.isArray(remoteLogs) && remoteLogs.length > 0) {
+          this.auditLogs = remoteLogs;
+        }
+      }
+
+      this.initialSyncDone = true;
+      this.notify();
     } catch (e) {
-      console.warn('Supabase Realtime not available, using in-memory reactive state.', e);
+      console.warn('Backend registry synchronization offline, using local reactive state.', e);
     }
   }
 
@@ -87,8 +107,20 @@ class ApiService {
     return this.cameras.find((c) => c.id === id || c.camera_id === id);
   }
 
-  public addCamera(camera: Camera): Camera {
+  public async addCamera(camera: Camera): Promise<Camera> {
     this.cameras.unshift(camera);
+    this.notify();
+
+    // Async backend persistence
+    try {
+      await fetch(`${API_BASE_URL}/api/registry/cameras`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(camera)
+      });
+    } catch (e) {
+      console.warn('Backend offline, camera saved in local state.', e);
+    }
 
     this.logAuditEvent({
       action: 'REGISTER_CAMERA',
@@ -97,12 +129,23 @@ class ApiService {
       metadataDiff: { camera_id: camera.camera_id, name: camera.camera_name, status: camera.status }
     });
 
-    this.notify();
     return camera;
   }
 
-  public bulkAddCameras(newCameras: Camera[]): number {
+  public async bulkAddCameras(newCameras: Camera[]): Promise<number> {
     this.cameras.unshift(...newCameras);
+    this.notify();
+
+    // Async backend persistence
+    try {
+      await fetch(`${API_BASE_URL}/api/registry/cameras/bulk`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cameras: newCameras })
+      });
+    } catch (e) {
+      console.warn('Backend offline, bulk cameras saved in local state.', e);
+    }
 
     this.logAuditEvent({
       action: 'BULK_CSV_IMPORT',
@@ -111,15 +154,25 @@ class ApiService {
       metadataDiff: { count: newCameras.length }
     });
 
-    this.notify();
     return newCameras.length;
   }
 
-  public updateCameraStatus(id: string, status: Camera['status']): boolean {
+  public async updateCameraStatus(id: string, status: Camera['status']): Promise<boolean> {
     const cam = this.cameras.find((c) => c.id === id || c.camera_id === id);
     if (cam) {
       const oldStatus = cam.status;
       cam.status = status;
+      this.notify();
+
+      try {
+        await fetch(`${API_BASE_URL}/api/registry/cameras/${cam.camera_id || cam.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+      } catch (e) {
+        console.warn('Backend offline, status updated locally.', e);
+      }
 
       this.logAuditEvent({
         action: 'UPDATE_CAMERA_STATUS',
@@ -128,23 +181,32 @@ class ApiService {
         metadataDiff: { from: oldStatus, to: status }
       });
 
-      this.notify();
       return true;
     }
     return false;
   }
 
-  public deleteCamera(id: string): boolean {
+  public async deleteCamera(id: string): Promise<boolean> {
     const idx = this.cameras.findIndex((c) => c.id === id || c.camera_id === id);
     if (idx !== -1) {
       const deleted = this.cameras.splice(idx, 1)[0];
+      this.notify();
+
+      try {
+        await fetch(`${API_BASE_URL}/api/registry/cameras/${deleted.camera_id || deleted.id}`, {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn('Backend offline, camera deleted locally.', e);
+      }
+
       this.logAuditEvent({
         action: 'DELETE_CAMERA',
         targetEntity: 'cameras',
         targetId: deleted.camera_id,
         metadataDiff: { camera_id: deleted.camera_id, name: deleted.camera_name }
       });
-      this.notify();
+
       return true;
     }
     return false;
@@ -160,7 +222,7 @@ class ApiService {
     return [...this.coverageZones];
   }
 
-  public recalculateGaps(): CoverageZone[] {
+  public async recalculateGaps(): Promise<CoverageZone[]> {
     const updated = this.coverageZones.map((z) => {
       const matchingCams = this.cameras.filter((c) => c.district === z.district);
       const actual = matchingCams.length;
@@ -182,6 +244,16 @@ class ApiService {
     });
 
     this.coverageZones = updated;
+    this.notify();
+
+    try {
+      await fetch(`${API_BASE_URL}/api/registry/coverage-zones/recalculate`, {
+        method: 'POST'
+      });
+    } catch (e) {
+      console.warn('Backend offline, gaps recalculated locally.', e);
+    }
+
     this.logAuditEvent({
       action: 'RECALCULATE_VDI_GAPS',
       targetEntity: 'coverage_zones',
@@ -189,7 +261,6 @@ class ApiService {
       metadataDiff: { zone_count: updated.length }
     });
 
-    this.notify();
     return [...this.coverageZones];
   }
 
