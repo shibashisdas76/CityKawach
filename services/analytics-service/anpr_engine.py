@@ -87,7 +87,8 @@ class AnprEngine:
 
     def _init_ocr(self):
         try:
-            import easyocr
+            import importlib
+            easyocr = importlib.import_module("easyocr")
             self.ocr_reader = easyocr.Reader(['en'], gpu=False)
             logger.info("EasyOCR Optical Engine initialized.")
         except Exception as e:
