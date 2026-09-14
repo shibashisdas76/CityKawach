@@ -46,7 +46,8 @@ export const PipelineDiagnosticsModal: React.FC<Props> = ({ isOpen, onClose }) =
 
   const fetchStatus = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/pipeline/unified-status');
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+      const res = await fetch(`${apiBase}/api/pipeline/unified-status`);
       if (res.ok) {
         const json = await res.json();
         setData(json);

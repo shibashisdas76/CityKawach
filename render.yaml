@@ -1,0 +1,39 @@
+# Render Blueprint for Sentinel Gujarat (Full Stack Live Deployment)
+# Free Tier Optimized Configuration (Backend + AI/ML + Frontend)
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # 1. Backend Service (FastAPI + YOLOv8 + EasyOCR + Analytics Service)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - type: web
+    name: sentinel-gujarat-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install --upgrade pip && pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r services/analytics-service/requirements.txt"
+    startCommand: "python -m uvicorn services.analytics-service.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: PORT
+        value: 10000
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # 2. Frontend Web Service (React 18 + Vite + GIS Dashboard)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - type: web
+    name: sentinel-gujarat-frontend
+    env: static
+    region: oregon
+    buildCommand: "cd apps/registry-web && npm install && npm run build"
+    staticPublishPath: "./apps/registry-web/dist"
+    routes:
+      - type: rewrite
+        source: "/*"
+        destination: "/index.html"
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: sentinel-gujarat-backend
+          property: host

@@ -19,6 +19,8 @@ from datetime import datetime
 from collections import defaultdict
 from typing import Optional, List
 from fastapi import FastAPI, Query, HTTPException, Request, Response, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
@@ -109,6 +111,28 @@ app.add_middleware(
 app.include_router(registry_router)
 app.include_router(federation_router)
 app.include_router(vms_model4_router)
+
+# ─── Static SPA Distribution Mount (Production Deployment) ───────────────────
+DIST_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "apps", "registry-web", "dist")
+if not os.path.exists(DIST_DIR):
+    DIST_DIR = os.path.join(os.path.dirname(__file__), "dist")
+
+if os.path.exists(DIST_DIR):
+    assets_dir = os.path.join(DIST_DIR, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa_frontend(full_path: str):
+        if full_path.startswith("api/") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+            raise HTTPException(status_code=404, detail="API Route Not Found")
+        target_file = os.path.join(DIST_DIR, full_path)
+        if os.path.isfile(target_file):
+            return FileResponse(target_file)
+        index_file = os.path.join(DIST_DIR, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Static Index Not Found")
 
 class WatchlistCreateRequest(BaseModel):
     plate_number: str

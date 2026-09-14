@@ -52,14 +52,16 @@ export const AlertsHubPage: React.FC = () => {
   const [resolveNotes, setResolveNotes] = useState('');
   const [resolving, setResolving] = useState(false);
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
   const fetchAlertsAndWatchlist = async () => {
     try {
-      const resAlerts = await fetch('http://127.0.0.1:8000/api/alerts');
+      const resAlerts = await fetch(`${API_BASE}/api/alerts`);
       if (resAlerts.ok) {
         const data = await resAlerts.json();
         setAlerts(data);
       }
-      const resWatchlist = await fetch('http://127.0.0.1:8000/api/watchlist');
+      const resWatchlist = await fetch(`${API_BASE}/api/watchlist`);
       if (resWatchlist.ok) {
         const data = await resWatchlist.json();
         setWatchlist(data);
@@ -80,7 +82,7 @@ export const AlertsHubPage: React.FC = () => {
     if (!newPlate.trim() || !newReason.trim()) return;
     setSubmitting(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/watchlist', {
+      const res = await fetch(`${API_BASE}/api/watchlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,7 +113,7 @@ export const AlertsHubPage: React.FC = () => {
     if (!selectedAlert || !resolveOfficer.trim() || !resolveNotes.trim()) return;
     setResolving(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/alerts/${selectedAlert.id}/resolve`, {
+      const res = await fetch(`${API_BASE}/api/alerts/${selectedAlert.id}/resolve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

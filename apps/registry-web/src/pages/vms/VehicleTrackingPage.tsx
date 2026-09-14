@@ -43,8 +43,8 @@ export const VehicleTrackingPage: React.FC = () => {
     setLoadingSearch(true);
     
     try {
-      // Fetch comprehensive cross-model search payload
-      const res = await fetch(`http://127.0.0.1:8000/api/search?plate=${query}`);
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+      const res = await fetch(`${apiBase}/api/search?plate=${query}`);
       if (res.ok) {
         const payload = await res.json();
         setVahanDossier(payload.vahan_profile || null);
