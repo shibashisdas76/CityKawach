@@ -127,17 +127,6 @@ if os.path.exists(DIST_DIR):
     if os.path.exists(assets_dir):
         app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
-    @app.get("/{full_path:path}", include_in_schema=False)
-    async def serve_spa_frontend(full_path: str):
-        if full_path.startswith("api/") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
-            raise HTTPException(status_code=404, detail="API Route Not Found")
-        target_file = os.path.join(DIST_DIR, full_path)
-        if os.path.isfile(target_file):
-            return FileResponse(target_file)
-        index_file = os.path.join(DIST_DIR, "index.html")
-        if os.path.exists(index_file):
-            return FileResponse(index_file)
-        raise HTTPException(status_code=404, detail="Static Index Not Found")
 
 class WatchlistCreateRequest(BaseModel):
     plate_number: str
@@ -540,6 +529,19 @@ def get_health(request: Request):
         "federation_middleware": "Kafka Event Bus + CEP Correlator Active",
         "central_vms": "Active"
     }
+
+if os.path.exists(DIST_DIR):
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa_frontend(full_path: str):
+        if full_path.startswith("api/") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+            raise HTTPException(status_code=404, detail="API Route Not Found")
+        target_file = os.path.join(DIST_DIR, full_path)
+        if os.path.isfile(target_file):
+            return FileResponse(target_file)
+        index_file = os.path.join(DIST_DIR, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Static Index Not Found")
 
 if __name__ == "__main__":
     import uvicorn

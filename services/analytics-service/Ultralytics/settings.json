@@ -1,0 +1,19 @@
+{
+  "settings_version": "0.0.8",
+  "datasets_dir": "C:\\Users\\dassh\\Project\\Model-1\\services\\analytics-service\\datasets",
+  "weights_dir": "weights",
+  "runs_dir": "runs",
+  "uuid": "f219f3587e9f4e128811e9ed0c539b308d011c8ce7fc4fc621ae16d5ff2be20b",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "mlflow": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}
