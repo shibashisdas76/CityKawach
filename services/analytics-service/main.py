@@ -13,6 +13,10 @@ os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
 os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 import sys
+# ─── Ensure Current Service Directory is in sys.path ────────────────────────
+SERVICE_DIR = os.path.dirname(os.path.abspath(__file__))
+if SERVICE_DIR not in sys.path:
+    sys.path.insert(0, SERVICE_DIR)
 import re
 import time
 from datetime import datetime

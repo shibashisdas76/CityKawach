@@ -41,6 +41,7 @@ COPY --from=frontend-builder /app/apps/registry-web/dist /app/services/analytics
 COPY --from=frontend-builder /app/apps/registry-web/dist /app/apps/registry-web/dist
 
 ENV PORT=10000
+ENV PYTHONPATH=/app/services/analytics-service
 EXPOSE 10000
 
 CMD ["sh", "-c", "python -m uvicorn services.analytics-service.main:app --host 0.0.0.0 --port $PORT"]

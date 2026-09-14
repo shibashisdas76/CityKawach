@@ -17,6 +17,8 @@ services:
         value: 3.10.12
       - key: PORT
         value: 10000
+      - key: PYTHONPATH
+        value: services/analytics-service
 
   # ─────────────────────────────────────────────────────────────────────────────
   # 2. Frontend Web Service (React 18 + Vite + GIS Dashboard)
