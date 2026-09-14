@@ -186,13 +186,13 @@ export const AppLayout: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-sm font-black tracking-tight text-white uppercase flex items-center gap-1.5">
-                    STATEWIDE CCTV PLATFORM
+                    CITYKAWACH CENTRAL PLATFORM
                   </h1>
                   <span className="text-[9px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 px-1.5 py-0.5 rounded">
                     CONSOLIDATED
                   </span>
                 </div>
-                <p className="text-[10px] text-cyan-400 font-mono tracking-tight font-bold">GUJARAT POLICE SURVEILLANCE &amp; FORENSICS</p>
+                <p className="text-[10px] text-cyan-400 font-mono tracking-tight font-bold">CITYKAWACH INTELLIGENT SURVEILLANCE &amp; FORENSICS</p>
               </div>
             </NavLink>
 

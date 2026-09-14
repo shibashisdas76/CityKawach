@@ -71,9 +71,9 @@ export const LoginPage: React.FC = () => {
           <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100 shadow-sm">
             <Shield className="w-7 h-7 text-blue-600" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight font-sans">G-SCIP COMMAND PORTAL</h1>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight font-sans">CITYKAWACH COMMAND PORTAL</h1>
           <p className="text-blue-600 text-xs mt-1 font-bold tracking-wider uppercase font-mono">
-            Statewide CCTV Integration & Central VMS Platform
+            CityKawach CCTV Integration &amp; Central VMS Platform
           </p>
           <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-[11px] font-bold text-emerald-700 font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

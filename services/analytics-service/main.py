@@ -1,5 +1,5 @@
 """
-Sentinel CCTV Central Platform - Unified Model 1, 2, 3 & 4 FastAPI Stream Gateway & Analytics API.
+CityKawach CCTV Central Platform - Unified Model 1, 2, 3 & 4 FastAPI Stream Gateway & Analytics API.
 Provides RESTful endpoints for Model 1 CCTV Registry & GIS, Model 2 Live Stream Proxy & ANPR,
 Model 3 VMS Federation Middleware & CEP, and Model 4 Consolidated Central VMS.
 """
@@ -89,7 +89,7 @@ from vms_model4_db import init_model4_db
 from vms_model4_router import router as vms_model4_router
 
 app = FastAPI(
-    title="Sentinel Gujarat - CCTV Central Platform (Model 1 + Model 2 + Model 3 + Model 4)",
+    title="CityKawach - CCTV Central Platform (Model 1 + Model 2 + Model 3 + Model 4)",
     description="Unified Statewide CCTV Registry, Multi-VMS Federation & Consolidated Central VMS Platform",
     version="4.0.0"
 )
@@ -162,7 +162,7 @@ def on_startup():
 @app.get("/", tags=["Root & System Telemetry"])
 def root():
     return {
-        "platform": "Sentinel Gujarat CCTV Central Platform",
+        "platform": "CityKawach CCTV Central Platform",
         "version": "4.0.0",
         "models": [
             "Model 1 - Centralised CCTV Registry & GIS Mapping",

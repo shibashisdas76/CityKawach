@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Dockerfile for Sentinel Gujarat (Unified Production Container Deployment)
+# Dockerfile for CityKawach (Unified Production Container Deployment)
 # Multi-stage Docker build: React 18 SPA + Python FastAPI + AI/ML Engine
 # ─────────────────────────────────────────────────────────────────────────────
 

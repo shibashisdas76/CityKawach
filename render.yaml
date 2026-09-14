@@ -1,4 +1,4 @@
-# Render Blueprint for Sentinel Gujarat (Full Stack Live Deployment)
+# Render Blueprint for CityKawach (Full Stack Live Deployment)
 # Free Tier Optimized Configuration (Backend + AI/ML + Frontend)
 
 services:
@@ -6,7 +6,7 @@ services:
   # 1. Backend Service (FastAPI + YOLOv8 + EasyOCR + Analytics Service)
   # ─────────────────────────────────────────────────────────────────────────────
   - type: web
-    name: sentinel-gujarat-backend
+    name: citykawach-backend
     env: python
     region: oregon
     plan: free
@@ -22,7 +22,7 @@ services:
   # 2. Frontend Web Service (React 18 + Vite + GIS Dashboard)
   # ─────────────────────────────────────────────────────────────────────────────
   - type: web
-    name: sentinel-gujarat-frontend
+    name: citykawach-frontend
     env: static
     buildCommand: "cd apps/registry-web && npm install && npm run build"
     staticPublishPath: "./apps/registry-web/dist"
@@ -34,5 +34,5 @@ services:
       - key: VITE_API_BASE_URL
         fromService:
           type: web
-          name: sentinel-gujarat-backend
+          name: citykawach-backend
           property: host
