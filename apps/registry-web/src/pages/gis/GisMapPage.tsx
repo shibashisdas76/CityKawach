@@ -174,22 +174,42 @@ export const GisMapPage: React.FC = () => {
           {filteredCameras.map((cam) => (
             <Marker key={cam.id} position={[cam.latitude, cam.longitude]} icon={customMarker(cam.status)}>
               <Popup>
-                <div className="text-xs space-y-1.5 font-sans min-w-[200px]">
-                  <div className="flex items-center justify-between">
+                <div className="text-xs space-y-2 font-sans min-w-[240px]">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
                     <p className="font-mono text-[11px] font-bold text-blue-600">{cam.camera_id}</p>
                     <CameraStatusBadge status={cam.status} />
                   </div>
                   <p className="font-bold text-slate-900">{cam.camera_name}</p>
                   <p className="text-slate-600 font-medium">Dept: {cam.departments?.name || 'Surveillance'}</p>
                   <p className="text-slate-500 font-mono text-[10px]">
-                    Lat: {cam.latitude.toFixed(4)}, Lng: {cam.longitude.toFixed(4)}
+                    Lat: {cam.latitude.toFixed(4)}, Lng: {cam.longitude.toFixed(4)} • {cam.district}
                   </p>
-                  <div className="pt-2 border-t border-slate-200/80 flex gap-2">
+                  
+                  {/* Cross-Model Bridges */}
+                  <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-slate-200/80">
                     <Link
                       to={`/cameras/${cam.id}`}
-                      className="flex-1 text-center py-1.5 px-2 rounded-lg bg-blue-600 text-white font-bold text-[11px] hover:bg-blue-700 transition shadow-sm"
+                      className="py-1 px-2 rounded-lg bg-blue-50 text-blue-700 font-bold text-[10px] text-center hover:bg-blue-100 transition border border-blue-200"
                     >
-                      View Metadata
+                      M1: Asset Specs
+                    </Link>
+                    <Link
+                      to={`/vms/live?camId=${cam.camera_id}`}
+                      className="py-1 px-2 rounded-lg bg-cyan-50 text-cyan-700 font-bold text-[10px] text-center hover:bg-cyan-100 transition border border-cyan-200"
+                    >
+                      M2: Live Wall
+                    </Link>
+                    <Link
+                      to={`/federation/correlation?camId=${cam.camera_id}`}
+                      className="py-1 px-2 rounded-lg bg-purple-50 text-purple-700 font-bold text-[10px] text-center hover:bg-purple-100 transition border border-purple-200"
+                    >
+                      M3: CEP Events
+                    </Link>
+                    <Link
+                      to={`/vms/playback?camId=${cam.camera_id}`}
+                      className="py-1 px-2 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-[10px] text-center hover:bg-emerald-100 transition border border-emerald-200"
+                    >
+                      M4: Playback
                     </Link>
                   </div>
                 </div>
@@ -205,7 +225,7 @@ export const GisMapPage: React.FC = () => {
             return (
               <Marker key={`live-${scam.id}`} position={[camLat, camLng]} icon={liveStreamMarker()}>
                 <Popup>
-                  <div className="text-xs space-y-2 font-sans min-w-[220px]">
+                  <div className="text-xs space-y-2 font-sans min-w-[250px]">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
@@ -222,21 +242,37 @@ export const GisMapPage: React.FC = () => {
                       <div className="flex justify-between"><span className="text-slate-500">Department:</span><span className="font-semibold text-slate-700">{scam.department}</span></div>
                       <div className="flex justify-between"><span className="text-slate-500">Codec:</span><span className="font-mono uppercase font-bold text-blue-600">{scam.codec}</span></div>
                       <div className="flex justify-between"><span className="text-slate-500">GPS:</span><span className="font-mono text-slate-600 font-semibold">{camLat.toFixed(4)}, {camLng.toFixed(4)}</span></div>
-                      <div className="flex justify-between"><span className="text-slate-500">AI Edge Analytics:</span><span className="font-bold text-emerald-600">✓ ACTIVE (YOLO)</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">AI Edge Multi-Task:</span><span className="font-bold text-emerald-600">✓ ANPR + Face + Crowd</span></div>
                     </div>
-                    <div className="flex gap-2 pt-1">
-                      <button
-                        onClick={() => setPreviewCam(scam)}
-                        className="flex-1 py-1.5 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition shadow-xs text-center flex items-center justify-center gap-1"
-                      >
-                        <Video className="w-3 h-3" />
-                        <span>Live Stream</span>
-                      </button>
+
+                    {/* Quick Live Preview Action */}
+                    <button
+                      onClick={() => setPreviewCam(scam)}
+                      className="w-full py-1.5 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition shadow-xs text-center flex items-center justify-center gap-1.5"
+                    >
+                      <Video className="w-3.5 h-3.5" />
+                      <span>Open Live Stream Modal</span>
+                    </button>
+
+                    {/* 4-Model Cross Bridges */}
+                    <div className="grid grid-cols-3 gap-1 pt-1 border-t border-slate-100">
                       <Link
-                        to="/vms/live"
-                        className="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition text-center"
+                        to={`/vms/live?camId=${scam.id}`}
+                        className="py-1 px-1.5 rounded bg-cyan-50 hover:bg-cyan-100 text-cyan-700 font-bold text-[9px] text-center border border-cyan-200"
                       >
-                        Video Wall
+                        M2 Wall
+                      </Link>
+                      <Link
+                        to={`/federation/correlation?camId=${scam.id}`}
+                        className="py-1 px-1.5 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-[9px] text-center border border-purple-200"
+                      >
+                        M3 CEP
+                      </Link>
+                      <Link
+                        to={`/vms/playback?camId=${scam.id}`}
+                        className="py-1 px-1.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[9px] text-center border border-emerald-200"
+                      >
+                        M4 DVR
                       </Link>
                     </div>
                   </div>

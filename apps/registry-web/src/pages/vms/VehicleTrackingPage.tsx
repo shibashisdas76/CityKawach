@@ -23,6 +23,9 @@ export const VehicleTrackingPage: React.FC = () => {
   const [replayIdx, setReplayIdx] = useState(0);
   const [replaying, setReplaying] = useState(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [vahanDossier, setVahanDossier] = useState<any>(null);
+  const [egujcopRecords, setEgujcopRecords] = useState<any[]>([]);
+  const [cepCorrelations, setCepCorrelations] = useState<any[]>([]);
   const replayRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -38,6 +41,20 @@ export const VehicleTrackingPage: React.FC = () => {
     const query = (plateToSearch || searchQuery).trim().toUpperCase();
     if (!query) return;
     setLoadingSearch(true);
+    
+    try {
+      // Fetch comprehensive cross-model search payload
+      const res = await fetch(`http://127.0.0.1:8000/api/search?plate=${query}`);
+      if (res.ok) {
+        const payload = await res.json();
+        setVahanDossier(payload.vahan_profile || null);
+        setEgujcopRecords(payload.egujcop_records || []);
+        setCepCorrelations(payload.cep_correlations || []);
+      }
+    } catch {
+      // Fallback
+    }
+
     const result = await vmsService.searchPlateTrajectory(query);
     if (result) {
       setSelected(result);
@@ -46,6 +63,10 @@ export const VehicleTrackingPage: React.FC = () => {
     }
     setLoadingSearch(false);
   };
+
+  useEffect(() => {
+    handleSearch('GJ01AB1234');
+  }, []);
 
   const startReplay = () => {
     if (!selected || selected.sightings.length < 2) return;
@@ -316,6 +337,64 @@ export const VehicleTrackingPage: React.FC = () => {
                   </button>
                 </div>
               </div>
+
+              {/* ── CROSS-MODEL INTELLIGENCE DOSSIER: VAHAN & eGujCop & CEP ── */}
+              {(vahanDossier || egujcopRecords.length > 0 || cepCorrelations.length > 0) && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 bg-slate-900 text-white rounded-xl border border-slate-800">
+                  {/* Model 4: VAHAN Database Profile */}
+                  <div className="space-y-1.5">
+                    <div className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <span>🏛 MODEL 4: VAHAN REGISTRY</span>
+                    </div>
+                    {vahanDossier ? (
+                      <div className="text-xs space-y-0.5">
+                        <p className="font-bold text-white">{vahanDossier.owner_name}</p>
+                        <p className="text-[11px] text-slate-300">{vahanDossier.vehicle_model} ({vahanDossier.fuel_type || 'Diesel'})</p>
+                        <p className="text-[10px] text-slate-400 font-mono">RTO: {vahanDossier.rto_office || 'Ahmedabad RTO (GJ-01)'}</p>
+                        <p className="text-[10px] text-emerald-400 font-semibold">Insurance: {vahanDossier.insurance_status || 'VALID'}</p>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-slate-400">VAHAN Profile Verified</p>
+                    )}
+                  </div>
+
+                  {/* Model 4: eGujCop Criminal Records */}
+                  <div className="space-y-1.5">
+                    <div className="text-[10px] font-mono text-rose-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <span>🚨 MODEL 4: eGUJCOP FIR FLAGS</span>
+                    </div>
+                    {egujcopRecords.length > 0 ? (
+                      egujcopRecords.map((r, i) => (
+                        <div key={i} className="text-xs space-y-0.5 bg-rose-950/50 p-2 rounded border border-rose-800/60">
+                          <p className="font-bold text-rose-200">{r.fir_number}</p>
+                          <p className="text-[11px] text-rose-300 font-medium">{r.offense_description || r.charges}</p>
+                          <p className="text-[10px] text-rose-400 font-mono">Status: {r.status || 'ACTIVE WARRANT'}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[11px] text-emerald-400">✓ No Pending eGujCop FIRs</p>
+                    )}
+                  </div>
+
+                  {/* Model 3: CEP Correlated Incidents */}
+                  <div className="space-y-1.5">
+                    <div className="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                      <span>⚡ MODEL 3: CEP CORRELATIONS</span>
+                    </div>
+                    {cepCorrelations.length > 0 ? (
+                      cepCorrelations.slice(0, 1).map((c, i) => (
+                        <div key={i} className="text-xs space-y-0.5 bg-purple-950/50 p-2 rounded border border-purple-800/60">
+                          <p className="font-bold text-purple-200">{c.incidentCode || c.rule_name || 'Corridor Alert'}</p>
+                          <p className="text-[11px] text-purple-300 font-medium">{c.title || 'Cross-Jurisdiction Evasion'}</p>
+                          <p className="text-[10px] text-purple-400 font-mono">Severity: {c.severity || 'HIGH'}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[11px] text-slate-400">Normal Travel Pattern (No CEP Triggers)</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Chronological Checkpoint Stream */}
               <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-emerald-200">

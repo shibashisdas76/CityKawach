@@ -8,12 +8,21 @@ and OCR extraction with regex verification.
 import os
 import re
 import cv2
+import threading
 import numpy as np
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("anpr_engine")
+
+_inference_lock = threading.Lock()
+
+try:
+    import torch
+    torch.set_num_threads(1)
+except Exception:
+    pass
 
 # COCO Vehicle Class IDs
 # 2: car, 3: motorcycle, 5: bus, 7: truck, 0: person
@@ -176,12 +185,18 @@ class AnprEngine:
 
         if self.yolo_available and self.model is not None and frame is not None:
             try:
-                results = self.model(
-                    frame,
-                    verbose=False,
-                    classes=VEHICLE_CLASSES,
-                    conf=0.40
-                )
+                # Downsample frame for fast, low-memory inference if needed
+                infer_frame = frame
+                if frame.shape[1] > 640 or frame.shape[0] > 360:
+                    infer_frame = cv2.resize(frame, (640, 360))
+
+                with _inference_lock:
+                    results = self.model(
+                        infer_frame,
+                        verbose=False,
+                        classes=VEHICLE_CLASSES,
+                        conf=0.40
+                    )
                 for r in results:
                     boxes = r.boxes
                     for box in boxes:
@@ -191,7 +206,7 @@ class AnprEngine:
 
                         # Bounding box coordinates
                         xyxy = box.xyxy[0].cpu().numpy().astype(int)
-                        plate_crop = self._extract_plate_candidate_region(frame, (xyxy[0], xyxy[1], xyxy[2], xyxy[3]))
+                        plate_crop = self._extract_plate_candidate_region(infer_frame, (xyxy[0], xyxy[1], xyxy[2], xyxy[3]))
 
                         # Extract optical plate text
                         plate_text, ocr_conf = self._recognize_plate_text(plate_crop, district, pts_ms, cls_id)
@@ -220,7 +235,7 @@ class AnprEngine:
                         if len(detections) >= 2:
                             break
             except Exception as e:
-                logger.error(f"YOLO inference error: {e}")
+                logger.debug(f"YOLO inference notice: {e}")
 
         # Fallback if YOLO yielded no detections or is in fallback mode
         if not detections and frame is not None:

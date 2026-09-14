@@ -643,3 +643,73 @@ def get_audit_trail(limit: int = 30) -> List[Dict[str, Any]]:
     rows = [dict(r) for r in cursor.fetchall()]
     conn.close()
     return rows
+
+# ─── Live Worker Event Ingestion Helpers ─────────────────────────────────────
+def record_face_detection(event: Dict[str, Any]) -> str:
+    """Inserts a real-time face recognition sighting from the edge worker."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    doc_id = event.get("id") or str(uuid.uuid4())
+    cursor.execute("""
+        INSERT INTO vms_face_detections (
+            id, camera_id, camera_name, location, timestamp, pts_ms,
+            person_name, gender, estimated_age, confidence, nafis_id,
+            criminal_record, alert_severity, matched_watchlist, face_bbox
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        doc_id, event["camera_id"], event["camera_name"], event["location"],
+        event.get("timestamp", datetime.utcnow().isoformat()),
+        event.get("pts_ms", 0.0), event.get("person_name", "Citizen"),
+        event.get("gender", "MALE"), event.get("estimated_age", 30),
+        event.get("confidence", 0.90), event.get("nafis_id"),
+        event.get("criminal_record"), event.get("alert_severity", "NONE"),
+        event.get("matched_watchlist", 0), event.get("face_bbox", "{}")
+    ))
+    conn.commit()
+    conn.close()
+    return doc_id
+
+def record_crowd_metrics(metrics: Dict[str, Any]) -> int:
+    """Inserts real-time crowd density, footfall, and heatmap data from the edge worker."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO vms_crowd_metrics (
+            camera_id, camera_name, location, timestamp, pedestrian_count,
+            vehicle_count, density_percent, congestion_level, overcrowding_alert, heatmap_data
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        metrics["camera_id"], metrics["camera_name"], metrics["location"],
+        metrics.get("timestamp", datetime.utcnow().isoformat()),
+        metrics.get("pedestrian_count", 0), metrics.get("vehicle_count", 0),
+        metrics.get("density_percent", 0.0), metrics.get("congestion_level", "LOW"),
+        metrics.get("overcrowding_alert", 0), metrics.get("heatmap_data", "[]")
+    ))
+    inserted_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return inserted_id
+
+def record_anomaly(anomaly: Dict[str, Any]) -> str:
+    """Inserts a real-time spatial-temporal anomaly threat from the edge worker."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    doc_id = anomaly.get("id") or str(uuid.uuid4())
+    cursor.execute("""
+        INSERT INTO vms_anomalies (
+            id, camera_id, camera_name, location, timestamp, pts_ms,
+            anomaly_type, title, description, severity, confidence, status,
+            resolved_by, resolution_notes, bounding_box
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        doc_id, anomaly["camera_id"], anomaly["camera_name"], anomaly["location"],
+        anomaly.get("timestamp", datetime.utcnow().isoformat()),
+        anomaly.get("pts_ms", 0.0), anomaly["anomaly_type"], anomaly["title"],
+        anomaly["description"], anomaly["severity"], anomaly.get("confidence", 0.92),
+        anomaly.get("status", "ACTIVE"), anomaly.get("resolved_by"),
+        anomaly.get("resolution_notes"), anomaly.get("bounding_box", "{}")
+    ))
+    conn.commit()
+    conn.close()
+    return doc_id
+

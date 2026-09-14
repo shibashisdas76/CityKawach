@@ -16,7 +16,11 @@ import {
   Loader2,
   RefreshCw,
   Eye,
-  Sliders
+  Sliders,
+  MapPin,
+  Film,
+  Car,
+  Database
 } from 'lucide-react';
 import { federationService } from '../../services/federationService';
 import { CorrelatedIncident, IncidentSeverity, IncidentStatus } from '../../types/federation.types';
@@ -298,22 +302,40 @@ export const UnifiedIncidentHubPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Action Buttons */}
+              {/* Action Buttons & Cross-Model Bridges */}
               <div className="space-y-2 pt-2 border-t border-slate-800">
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to={`/map`}
+                    className="flex items-center justify-center gap-1.5 bg-blue-900/40 hover:bg-blue-900/60 text-blue-300 text-xs font-bold py-2 rounded-xl border border-blue-700/50 transition"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>M1: GIS Map</span>
+                  </Link>
+
+                  <Link
+                    to={`/vms/tracking`}
+                    className="flex items-center justify-center gap-1.5 bg-cyan-900/40 hover:bg-cyan-900/60 text-cyan-300 text-xs font-bold py-2 rounded-xl border border-cyan-700/50 transition"
+                  >
+                    <Car className="w-3.5 h-3.5" />
+                    <span>M2: Track Target</span>
+                  </Link>
+                </div>
+
                 <Link
                   to={`/federation/correlation?incident=${selectedIncident.incidentCode}`}
                   className="w-full flex items-center justify-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2.5 rounded-xl border border-slate-700 transition"
                 >
                   <Zap className="w-3.5 h-3.5 text-amber-400" />
-                  Inspect CEP Correlation Graph
+                  Inspect M3 CEP Correlation Graph
                 </Link>
 
                 <Link
-                  to="/federation/wall"
-                  className="w-full flex items-center justify-center gap-1.5 bg-blue-600/30 hover:bg-blue-600/50 text-cyan-300 text-xs font-bold py-2.5 rounded-xl border border-blue-500/30 transition"
+                  to={`/vms/playback`}
+                  className="w-full flex items-center justify-center gap-1.5 bg-emerald-950/50 hover:bg-emerald-900/60 text-emerald-300 text-xs font-bold py-2.5 rounded-xl border border-emerald-700/50 transition"
                 >
-                  <Play className="w-3.5 h-3.5" />
-                  View Live Video Wall
+                  <Film className="w-3.5 h-3.5" />
+                  Export Section 65B Video Recording (M4)
                 </Link>
 
                 {selectedIncident.status !== 'RESOLVED' && (
@@ -322,7 +344,7 @@ export const UnifiedIncidentHubPage: React.FC = () => {
                     className="w-full flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xs py-2.5 rounded-xl transition shadow-lg"
                   >
                     <CheckCircle2 className="w-4 h-4 fill-slate-950" />
-                    Log Interception & Resolve Incident
+                    Log Interception &amp; Resolve Incident
                   </button>
                 )}
               </div>

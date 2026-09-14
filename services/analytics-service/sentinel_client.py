@@ -121,8 +121,11 @@ class SentinelGatewayClient:
         if not self._authenticated or "sentinel" not in self.session.cookies:
             self.login()
 
-    def fetch_camera_catalogue(self, backend_host: str = "http://127.0.0.1:8000") -> List[Dict[str, Any]]:
+    def fetch_camera_catalogue(self, backend_host: str = "http://127.0.0.1:8000", force: bool = False) -> List[Dict[str, Any]]:
         """Fetch all cameras and normalize stream parameters with authenticated proxy URLs."""
+        if not force and self._cached_cameras and len(self._cached_cameras) >= 30:
+            return self._cached_cameras
+
         self.ensure_auth()
         cameras = []
         try:

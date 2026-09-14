@@ -766,7 +766,7 @@ def insert_correlated_incident(incident: Dict[str, Any]) -> int:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO correlated_incidents (
+        INSERT OR IGNORE INTO correlated_incidents (
             incident_code, rule_id, rule_code, rule_name, title, description,
             severity, status, lead_department, involved_vms_ids_json, involved_vendors_json,
             involved_cameras_json, trigger_events_json, correlation_score, time_window_seconds,

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { apiService } from '../../services/apiService';
 import { CameraStatusBadge } from '../../components/cameras/CameraStatusBadge';
+import { VideoPlayer } from '../../components/vms/VideoPlayer';
+import { SentinelCamera } from '../../types/camera.types';
 import {
   ArrowLeft,
   Video,
@@ -15,7 +17,10 @@ import {
   Play,
   Cpu,
   RefreshCw,
-  Check
+  Check,
+  Film,
+  Layers,
+  Car
 } from 'lucide-react';
 
 export const CameraDetailPage: React.FC = () => {
@@ -26,6 +31,30 @@ export const CameraDetailPage: React.FC = () => {
   const [pinging, setPinging] = useState(false);
   const [latency, setLatency] = useState<number | null>(camera.ping_latency_ms || 12);
   const [aiOverlay, setAiOverlay] = useState(true);
+
+  // Map camera to Sentinel format for VideoPlayer
+  const sentinelCam: SentinelCamera = {
+    id: camera.camera_id || 'cam01',
+    number: parseInt((camera.camera_id || 'cam01').replace(/\D/g, '') || '1', 10),
+    name: camera.camera_name,
+    location: camera.address || 'Ahmedabad Crossroad',
+    hls_url: camera.rtsp_url ? `https://cctv.corp8.cloud/hls/${camera.camera_id}.m3u8` : '',
+    hls_live_url: camera.rtsp_url ? `https://cctv.corp8.cloud/hls/${camera.camera_id}.m3u8` : '',
+    rtsp_url: camera.rtsp_url || '',
+    webrtc_url: '',
+    codec: 'H.264 / AAC',
+    live: camera.status === 'ONLINE',
+    width: 1920,
+    height: 1080,
+    fps: 30,
+    bitrate_kbps: 4096,
+    bits_per_pixel: 0.08,
+    district: camera.district,
+    department: camera.departments?.name || 'Surveillance',
+    latitude: camera.latitude,
+    longitude: camera.longitude,
+    ai_active: true
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -59,21 +88,47 @@ export const CameraDetailPage: React.FC = () => {
           <span>Back to Camera Registry</span>
         </Link>
 
-        <div className="flex items-center space-x-2.5">
+        {/* 4-Model Cross Navigation Action Buttons */}
+        <div className="flex items-center space-x-2 flex-wrap">
           <button
             onClick={handleTestPing}
             disabled={pinging}
-            className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center space-x-2 transition shadow-sm"
+            className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center space-x-1.5 transition shadow-sm"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${pinging ? 'animate-spin' : ''}`} />
-            <span>Test Ping Latency</span>
+            <span>Test Ping</span>
           </button>
+          
           <Link
             to={`/map?camId=${camera.id}`}
-            className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 text-xs font-semibold flex items-center space-x-2 transition shadow-sm"
+            className="px-3 py-1.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 text-xs font-semibold flex items-center space-x-1.5 transition shadow-sm"
           >
-            <MapPin className="w-4 h-4" />
-            <span>Locate on GIS Map</span>
+            <MapPin className="w-3.5 h-3.5" />
+            <span>M1: GIS Map</span>
+          </Link>
+
+          <Link
+            to={`/vms/live?camId=${camera.camera_id}`}
+            className="px-3 py-1.5 rounded-xl bg-cyan-600 text-white hover:bg-cyan-700 text-xs font-semibold flex items-center space-x-1.5 transition shadow-sm"
+          >
+            <Video className="w-3.5 h-3.5" />
+            <span>M2: Live Wall</span>
+          </Link>
+
+          <Link
+            to={`/federation/correlation?camId=${camera.camera_id}`}
+            className="px-3 py-1.5 rounded-xl bg-purple-600 text-white hover:bg-purple-700 text-xs font-semibold flex items-center space-x-1.5 transition shadow-sm"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>M3: CEP Events</span>
+          </Link>
+
+          <Link
+            to={`/vms/playback?camId=${camera.camera_id}`}
+            className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-semibold flex items-center space-x-1.5 transition shadow-sm"
+          >
+            <Film className="w-3.5 h-3.5" />
+            <span>M4: Playback</span>
           </Link>
         </div>
       </div>
@@ -123,12 +178,12 @@ export const CameraDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Stream Canvas + Tech Specs */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Simulated Live RTSP Video Player */}
+          {/* Live Stream Player */}
           <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-lg space-y-0 relative">
             <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex justify-between items-center text-xs font-mono text-slate-300">
               <span className="flex items-center space-x-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-                <span className="font-bold text-white tracking-wide">LIVE RTSP STREAM FEED</span>
+                <span className="font-bold text-white tracking-wide">LIVE HLS / RTSP STREAM FEED</span>
                 <span className="text-slate-400">({camera.resolution} @ 30 FPS)</span>
               </span>
               <div className="flex items-center space-x-3">
@@ -142,31 +197,9 @@ export const CameraDetailPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Video Canvas Container */}
-            <div className="h-72 bg-gradient-to-br from-slate-900 via-slate-950 to-black relative flex items-center justify-center overflow-hidden">
-              {/* Grid Lines */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]" />
-
-              {/* Bounding Box Visual Overlays when AI is enabled */}
-              {aiOverlay && (
-                <>
-                  <div className="absolute top-12 left-16 border-2 border-emerald-400/80 bg-emerald-500/10 rounded-lg p-1.5 text-[10px] font-mono text-emerald-300 shadow-lg">
-                    <span>VEHICLE: GJ-01-AB-1234 (98%)</span>
-                  </div>
-                  <div className="absolute bottom-16 right-24 border-2 border-blue-400/80 bg-blue-500/10 rounded-lg p-1.5 text-[10px] font-mono text-blue-300 shadow-lg">
-                    <span>PEDESTRIAN (92%)</span>
-                  </div>
-                  <div className="absolute top-8 right-12 text-[10px] font-mono text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-700">
-                    ANPR Model: v2.4-lite
-                  </div>
-                </>
-              )}
-
-              <div className="text-center space-y-2 z-10">
-                <Play className="w-10 h-10 text-blue-500 mx-auto opacity-80 animate-pulse" />
-                <p className="text-xs font-mono text-slate-400">RTSP Stream Ingestion Pipeline Operational</p>
-                <p className="text-[11px] font-mono text-emerald-400 font-semibold">{camera.rtsp_url}</p>
-              </div>
+            {/* Live Video Element */}
+            <div className="aspect-video bg-black relative">
+              <VideoPlayer camera={sentinelCam} showOverlay={aiOverlay} />
             </div>
           </div>
 
@@ -208,7 +241,7 @@ export const CameraDetailPage: React.FC = () => {
                 <span>Assigned AI & Computer Vision Pipelines</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {(camera.ai_capabilities || ['ANPR', 'CROWD_DENSITY', 'MOTION_DETECT']).map((cap) => (
+                {(camera.ai_capabilities || ['ANPR', 'CROWD_DENSITY', 'MOTION_DETECT', 'FACE_RECOGNITION']).map((cap) => (
                   <span key={cap} className="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 font-mono text-xs font-semibold inline-flex items-center gap-1.5">
                     <Check className="w-3.5 h-3.5 text-blue-600" />
                     <span>{cap.replace(/_/g, ' ')}</span>

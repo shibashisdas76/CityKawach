@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle, ShieldAlert, PlusCircle, CheckCircle2, Search, Filter, Radio, Clock, MapPin, User, FileText, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AlertTriangle, ShieldAlert, PlusCircle, CheckCircle2, Search, Filter, Radio, Clock, MapPin, User, FileText, Loader2, Navigation, Zap, Film, Car } from 'lucide-react';
 
 interface WatchlistRecord {
   id: number;
@@ -254,6 +255,31 @@ export const AlertsHubPage: React.FC = () => {
                       <span>{new Date(alert.timestamp).toLocaleString()}</span>
                     </div>
                   </div>
+
+                  {/* 4-Model Cross Bridges */}
+                  <div className="grid grid-cols-3 gap-1 pt-2 border-t border-slate-200/60">
+                    <Link
+                      to={`/vms/tracking?plate=${alert.plate_number}`}
+                      className="py-1 px-1.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] text-center border border-emerald-200 flex items-center justify-center gap-1"
+                    >
+                      <Navigation className="w-3 h-3" />
+                      <span>M2 Track</span>
+                    </Link>
+                    <Link
+                      to={`/federation/correlation?plate=${alert.plate_number}`}
+                      className="py-1 px-1.5 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-[10px] text-center border border-purple-200 flex items-center justify-center gap-1"
+                    >
+                      <Zap className="w-3 h-3" />
+                      <span>M3 CEP</span>
+                    </Link>
+                    <Link
+                      to={`/vms/playback?plate=${alert.plate_number}`}
+                      className="py-1 px-1.5 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[10px] text-center border border-blue-200 flex items-center justify-center gap-1"
+                    >
+                      <Film className="w-3 h-3" />
+                      <span>M4 DVR</span>
+                    </Link>
+                  </div>
                 </div>
 
                 <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
@@ -454,7 +480,7 @@ export const AlertsHubPage: React.FC = () => {
                   required
                   rows={3}
                   value={resolveNotes}
-                  onChange={e => setNewReason(e.target.value)}
+                  onChange={e => setResolveNotes(e.target.value)}
                   placeholder="e.g. PCR Van #12 dispatched to intercept vehicle at toll plaza."
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none"
                 />
