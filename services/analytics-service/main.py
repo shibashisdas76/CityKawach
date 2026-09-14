@@ -5,6 +5,7 @@ Model 3 VMS Federation Middleware & CEP, and Model 4 Consolidated Central VMS.
 """
 
 import os
+os.environ["YOLO_CONFIG_DIR"] = "/tmp/Ultralytics"
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"

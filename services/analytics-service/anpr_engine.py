@@ -74,9 +74,8 @@ class AnprEngine:
     def __init__(self, model_path: Optional[str] = None):
         self.model = None
         self.yolo_available = False
-        self.ocr_reader = None
+        self._ocr_initialized = False
         self._init_yolo(model_path)
-        self._init_ocr()
 
     def _init_yolo(self, model_path: Optional[str] = None):
         try:
@@ -94,14 +93,17 @@ class AnprEngine:
             logger.warning(f"Could not load ultralytics YOLO model ({e}). Using optimized CV detector fallback.")
             self.yolo_available = False
 
-    def _init_ocr(self):
-        try:
-            import importlib
-            easyocr = importlib.import_module("easyocr")
-            self.ocr_reader = easyocr.Reader(['en'], gpu=False)
-            logger.info("EasyOCR Optical Engine initialized.")
-        except Exception as e:
-            logger.info(f"EasyOCR optional engine not active ({e}). Using OpenCV morphological character segmentation.")
+    def _get_ocr_reader(self):
+        if not self._ocr_initialized:
+            self._ocr_initialized = True
+            try:
+                import importlib
+                easyocr = importlib.import_module("easyocr")
+                self.ocr_reader = easyocr.Reader(['en'], gpu=False, verbose=False)
+                logger.info("EasyOCR Optical Engine initialized.")
+            except Exception as e:
+                logger.info(f"EasyOCR optional engine not active ({e}). Using OpenCV morphological character segmentation.")
+        return self.ocr_reader
 
     def _extract_plate_candidate_region(self, frame: np.ndarray, bbox: Tuple[int, int, int, int]) -> Optional[np.ndarray]:
         """Crops the lower portion of the detected vehicle bounding box where plates reside."""
@@ -131,9 +133,10 @@ class AnprEngine:
             return fallback, 0.88
 
         # 1. Try EasyOCR if loaded
-        if self.ocr_reader is not None:
+        reader = self._get_ocr_reader()
+        if reader is not None:
             try:
-                results = self.ocr_reader.readtext(plate_img)
+                results = reader.readtext(plate_img)
                 for bbox, text, conf in results:
                     cleaned = re.sub(r'[^A-Z0-9]', '', text.upper())
                     match = PLATE_REGEX.search(cleaned)
