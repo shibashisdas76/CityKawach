@@ -24,7 +24,6 @@ services:
   - type: web
     name: sentinel-gujarat-frontend
     env: static
-    region: oregon
     buildCommand: "cd apps/registry-web && npm install && npm run build"
     staticPublishPath: "./apps/registry-web/dist"
     routes:
